@@ -1,20 +1,31 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../constants/theme";
+import { formatToken } from "../constants/services";
 
-export default function TokenCard() {
+export default function TokenCard({
+  token,
+  serviceName,
+  position,
+  waitTime,
+  status = "waiting",
+  counter,
+}) {
+  const isServing = status === "serving";
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, isServing && styles.servingCard]}>
       <View style={styles.top}>
         <View>
           <Text style={styles.label}>YOUR ACTIVE TOKEN</Text>
-
-          <Text style={styles.token}>A-026</Text>
+          <Text style={styles.token}>{token}</Text>
         </View>
 
-        <View style={styles.status}>
-          <View style={styles.dot} />
-          <Text style={styles.statusText}>WAITING</Text>
+        <View style={[styles.status, isServing && styles.servingStatus]}>
+          <View style={[styles.dot, isServing && styles.servingDot]} />
+          <Text style={[styles.statusText, isServing && styles.servingStatusText]}>
+            {isServing ? "SERVING" : "WAITING"}
+          </Text>
         </View>
       </View>
 
@@ -23,34 +34,46 @@ export default function TokenCard() {
       <View style={styles.details}>
         <View>
           <Text style={styles.detailLabel}>SERVICE</Text>
-          <Text style={styles.detailValue}>
-            General Consultation
-          </Text>
+          <Text style={styles.detailValue}>{serviceName}</Text>
         </View>
 
         <View>
           <Text style={styles.detailLabel}>POSITION</Text>
-          <Text style={styles.detailValue}>#05</Text>
+          <Text style={styles.detailValue}>
+            {isServing ? "Now" : `#${String(position).padStart(2, "0")}`}
+          </Text>
         </View>
 
         <View>
           <Text style={styles.detailLabel}>EST. WAIT</Text>
-          <Text style={styles.detailValue}>18 min</Text>
+          <Text style={styles.detailValue}>{waitTime}</Text>
         </View>
       </View>
 
-      <View style={styles.counter}>
-        <Ionicons
-          name="location-outline"
-          size={16}
-          color={COLORS.neon}
-        />
-
-        <Text style={styles.counterText}>
-          Counter 01 · General Consultation
-        </Text>
-      </View>
+      {counter && (
+        <View style={styles.counter}>
+          <Ionicons name="location-outline" size={16} color={COLORS.neon} />
+          <Text style={styles.counterText}>
+            {counter} · {serviceName}
+          </Text>
+        </View>
+      )}
     </View>
+  );
+}
+
+export function TokenCardFromActive({ activeToken, position, waitTime, status }) {
+  if (!activeToken) return null;
+
+  return (
+    <TokenCard
+      token={formatToken(activeToken.prefix, activeToken.number)}
+      serviceName={activeToken.serviceName}
+      position={position}
+      waitTime={waitTime}
+      status={status}
+      counter={activeToken.counter}
+    />
   );
 }
 
@@ -61,6 +84,10 @@ const styles = StyleSheet.create({
     padding: 20,
     borderWidth: 1,
     borderColor: "rgba(32,230,210,0.20)",
+  },
+
+  servingCard: {
+    borderColor: COLORS.success,
   },
 
   top: {
@@ -93,6 +120,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(39,230,165,0.08)",
   },
 
+  servingStatus: {
+    backgroundColor: "rgba(32,230,210,0.12)",
+  },
+
   dot: {
     width: 7,
     height: 7,
@@ -101,10 +132,18 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
 
+  servingDot: {
+    backgroundColor: COLORS.neon,
+  },
+
   statusText: {
     color: COLORS.success,
     fontSize: 10,
     fontWeight: "800",
+  },
+
+  servingStatusText: {
+    color: COLORS.neon,
   },
 
   line: {
