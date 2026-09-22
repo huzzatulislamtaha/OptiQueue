@@ -1,33 +1,45 @@
+import React from 'react';
 import {
   View,
   Text,
-  ScrollView,
   StyleSheet,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-
-import { COLORS } from "../constants/theme";
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 const notifications = [
   {
-    icon: "megaphone-outline",
-    title: "Your token is approaching",
-    text: "A-026 is now 5 positions away.",
-    time: "2 min ago",
+    id: 1,
+    icon: 'notifications',
+    title: 'Token Confirmed',
+    message: 'Your token A-027 has been successfully confirmed.',
+    time: '2 min ago',
     unread: true,
   },
   {
-    icon: "time-outline",
-    title: "Waiting time updated",
-    text: "Estimated waiting time is now 18 minutes.",
-    time: "8 min ago",
+    id: 2,
+    icon: 'time',
+    title: 'Queue Update',
+    message: 'There are currently 5 patients ahead of you.',
+    time: '5 min ago',
     unread: true,
   },
   {
-    icon: "ticket-outline",
-    title: "Token created",
-    text: "Your digital token A-026 was created successfully.",
-    time: "20 min ago",
+    id: 3,
+    icon: 'person',
+    title: 'Now Serving',
+    message: 'Currently serving token A-021.',
+    time: '8 min ago',
+    unread: false,
+  },
+  {
+    id: 4,
+    icon: 'checkmark-circle',
+    title: 'Service Available',
+    message: 'General Consultation service is currently available.',
+    time: '15 min ago',
     unread: false,
   },
 ];
@@ -35,58 +47,151 @@ const notifications = [
 export default function Notifications() {
   return (
     <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
+        </TouchableOpacity>
+
+        <View>
+          <Text style={styles.title}>Notifications</Text>
+          <Text style={styles.subtitle}>Stay updated with your queue</Text>
+        </View>
+
+        <TouchableOpacity style={styles.moreButton}>
+          <Ionicons
+            name="ellipsis-horizontal"
+            size={22}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
-        <Text style={styles.small}>UPDATES</Text>
+        {/* Status Card */}
+        <View style={styles.statusCard}>
+          <View style={styles.statusIcon}>
+            <Ionicons
+              name="pulse"
+              size={24}
+              color="#B8FF00"
+            />
+          </View>
 
-        <Text style={styles.title}>
-          Notifications
-        </Text>
+          <View style={styles.statusText}>
+            <Text style={styles.statusTitle}>Queue is Live</Text>
+            <Text style={styles.statusDescription}>
+              Your queue information is being updated.
+            </Text>
+          </View>
 
-        <Text style={styles.subtitle}>
-          Stay updated about your queue.
-        </Text>
+          <View style={styles.liveDot} />
+        </View>
 
-        <View style={styles.list}>
-          {notifications.map((item, index) => (
-            <View
-              key={index}
-              style={[
-                styles.card,
-                item.unread && styles.unread,
-              ]}
-            >
-              <View style={styles.icon}>
-                <Ionicons
-                  name={item.icon}
-                  size={21}
-                  color={COLORS.neon}
-                />
-              </View>
+        {/* Section Header */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Recent Updates</Text>
 
-              <View style={styles.info}>
-                <Text style={styles.cardTitle}>
+          <TouchableOpacity>
+            <Text style={styles.markText}>Mark all read</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Notifications */}
+        {notifications.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={[
+              styles.notificationCard,
+              item.unread && styles.unreadCard,
+            ]}
+            activeOpacity={0.8}
+          >
+            <View style={styles.notificationIcon}>
+              <Ionicons
+                name={item.icon}
+                size={21}
+                color="#B8FF00"
+              />
+            </View>
+
+            <View style={styles.notificationContent}>
+              <View style={styles.notificationTop}>
+                <Text style={styles.notificationTitle}>
                   {item.title}
                 </Text>
 
-                <Text style={styles.text}>
-                  {item.text}
-                </Text>
-
-                <Text style={styles.time}>
-                  {item.time}
-                </Text>
+                {item.unread && <View style={styles.unreadDot} />}
               </View>
 
-              {item.unread && (
-                <View style={styles.dot} />
-              )}
+              <Text style={styles.message}>
+                {item.message}
+              </Text>
+
+              <Text style={styles.time}>{item.time}</Text>
             </View>
-          ))}
-        </View>
+          </TouchableOpacity>
+        ))}
+
+        {/* Empty Bottom Space */}
+        <View style={{ height: 30 }} />
       </ScrollView>
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/')}
+        >
+          <Ionicons
+            name="home-outline"
+            size={22}
+            color="#777"
+          />
+          <Text style={styles.navText}>Home</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/my-token')}
+        >
+          <Ionicons
+            name="ticket-outline"
+            size={22}
+            color="#777"
+          />
+          <Text style={styles.navText}>My Token</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.navItem}>
+          <Ionicons
+            name="notifications"
+            size={22}
+            color="#B8FF00"
+          />
+          <Text style={[styles.navText, styles.activeNavText]}>
+            Alerts
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/profile')}
+        >
+          <Ionicons
+            name="person-outline"
+            size={22}
+            color="#777"
+          />
+          <Text style={styles.navText}>Profile</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -94,89 +199,203 @@ export default function Notifications() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#080A0C',
   },
 
-  content: {
-    padding: 20,
-    paddingTop: 58,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 55,
+    paddingBottom: 20,
   },
 
-  small: {
-    color: COLORS.neon,
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1.5,
+  backButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#15181B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
   },
 
   title: {
-    color: COLORS.white,
-    fontSize: 29,
-    fontWeight: "900",
-    marginTop: 5,
+    color: '#FFFFFF',
+    fontSize: 23,
+    fontWeight: '700',
   },
 
   subtitle: {
-    color: COLORS.secondary,
+    color: '#777C82',
     fontSize: 12,
-    marginTop: 5,
+    marginTop: 3,
   },
 
-  list: {
-    marginTop: 24,
+  moreButton: {
+    marginLeft: 'auto',
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#15181B',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
-  card: {
-    backgroundColor: COLORS.card,
-    borderRadius: 20,
+  content: {
+    paddingHorizontal: 20,
+    paddingBottom: 100,
+  },
+
+  statusCard: {
+    backgroundColor: '#111518',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: '#252A2D',
+    borderRadius: 18,
     padding: 16,
-    flexDirection: "row",
-    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 26,
   },
 
-  unread: {
-    borderColor: "rgba(32,230,210,0.18)",
-  },
-
-  icon: {
-    width: 44,
-    height: 44,
+  statusIcon: {
+    width: 46,
+    height: 46,
     borderRadius: 14,
-    backgroundColor: "rgba(32,230,210,0.08)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
+    backgroundColor: '#1C2511',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 13,
   },
 
-  info: {
+  statusText: {
     flex: 1,
   },
 
-  cardTitle: {
-    color: COLORS.white,
-    fontSize: 13,
-    fontWeight: "800",
+  statusTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
   },
 
-  text: {
-    color: COLORS.secondary,
+  statusDescription: {
+    color: '#777C82',
     fontSize: 11,
-    lineHeight: 16,
+    marginTop: 4,
+  },
+
+  liveDot: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: '#B8FF00',
+  },
+
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+
+  sectionTitle: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '700',
+  },
+
+  markText: {
+    color: '#B8FF00',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+
+  notificationCard: {
+    backgroundColor: '#101316',
+    borderWidth: 1,
+    borderColor: '#202529',
+    borderRadius: 17,
+    padding: 15,
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+
+  unreadCard: {
+    borderColor: '#303A24',
+  },
+
+  notificationIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 13,
+    backgroundColor: '#191F15',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 13,
+  },
+
+  notificationContent: {
+    flex: 1,
+  },
+
+  notificationTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  notificationTitle: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+
+  unreadDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#B8FF00',
+    marginLeft: 8,
+  },
+
+  message: {
+    color: '#90959A',
+    fontSize: 12,
+    lineHeight: 18,
     marginTop: 5,
   },
 
   time: {
-    color: COLORS.muted,
-    fontSize: 9,
+    color: '#5F6469',
+    fontSize: 10,
     marginTop: 7,
   },
 
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 5,
-    backgroundColor: COLORS.neon,
+  bottomNav: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 75,
+    backgroundColor: '#0D0F11',
+    borderTopWidth: 1,
+    borderTopColor: '#202326',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  navText: {
+    color: '#666B70',
+    fontSize: 10,
+    marginTop: 4,
+  },
+
+  activeNavText: {
+    color: '#B8FF00',
   },
 });

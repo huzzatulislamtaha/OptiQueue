@@ -1,144 +1,310 @@
+import React from 'react';
 import {
   View,
   Text,
-  ScrollView,
   StyleSheet,
-  Pressable,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-
-import BottomNav from "../components/BottomNav";
-import TokenCard from "../components/TokenCard";
-import { COLORS } from "../constants/theme";
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 export default function Home() {
   return (
     <View style={styles.container}>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
+
+        {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.small}>WELCOME BACK</Text>
-            <Text style={styles.title}>Hello, Patient 👋</Text>
+            <Text style={styles.greeting}>WELCOME TO</Text>
+            <Text style={styles.logoText}>OptiQueue</Text>
           </View>
 
-          <Pressable
-            style={styles.notification}
-            onPress={() => router.push("/notifications")}
+          <TouchableOpacity
+            style={styles.notificationButton}
+            onPress={() => router.push('/notifications')}
           >
             <Ionicons
               name="notifications-outline"
-              size={22}
-              color={COLORS.white}
+              size={23}
+              color="#FFFFFF"
             />
 
             <View style={styles.notificationDot} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.hero}>
-          <View style={styles.heroGlow} />
+        {/* Welcome Card */}
+        <View style={styles.welcomeCard}>
+          <View style={styles.welcomeContent}>
+            <Text style={styles.welcomeSmall}>SMART HOSPITAL</Text>
 
-          <Text style={styles.heroSmall}>
-            SMART HOSPITAL QUEUE
-          </Text>
+            <Text style={styles.welcomeTitle}>
+              Skip the waiting.{'\n'}
+              <Text style={styles.greenText}>Manage your time.</Text>
+            </Text>
 
-          <Text style={styles.heroTitle}>
-            Smart Queue.
-            {"\n"}
-            Less Waiting.
-          </Text>
+            <Text style={styles.welcomeDescription}>
+              Get your digital token and track your queue in real time.
+            </Text>
+          </View>
 
-          <Text style={styles.heroText}>
-            Get your digital token and track your queue
-            in real time.
-          </Text>
+          <View style={styles.pulseCircle}>
+            <Ionicons
+              name="pulse"
+              size={34}
+              color="#B8FF00"
+            />
+          </View>
+        </View>
 
-          <Pressable
-            style={styles.primaryButton}
-            onPress={() => router.push("/services")}
-          >
-            <Text style={styles.primaryText}>
+        {/* Get Token */}
+        <TouchableOpacity
+          style={styles.tokenButton}
+          activeOpacity={0.85}
+          onPress={() => router.push('/get-token')}
+        >
+          <View style={styles.tokenIcon}>
+            <Ionicons
+              name="ticket"
+              size={24}
+              color="#080A0C"
+            />
+          </View>
+
+          <View style={styles.tokenTextContainer}>
+            <Text style={styles.tokenTitle}>
               Get Digital Token
             </Text>
 
-            <Ionicons
-              name="arrow-forward"
-              size={19}
-              color="#06100F"
-            />
-          </Pressable>
-        </View>
+            <Text style={styles.tokenSubtitle}>
+              Join a hospital queue
+            </Text>
+          </View>
 
+          <Ionicons
+            name="arrow-forward"
+            size={22}
+            color="#080A0C"
+          />
+        </TouchableOpacity>
+
+        {/* Active Token */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>
             Active Token
           </Text>
 
-          <Pressable
-            onPress={() => router.push("/my-token")}
+          <TouchableOpacity
+            onPress={() => router.push('/my-token')}
           >
-            <Text style={styles.link}>View</Text>
-          </Pressable>
+            <Text style={styles.viewText}>
+              View
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <TokenCard />
+        <TouchableOpacity
+          style={styles.activeCard}
+          activeOpacity={0.85}
+          onPress={() => router.push('/my-token')}
+        >
+          <View style={styles.tokenBadge}>
+            <Text style={styles.tokenBadgeText}>
+              A-027
+            </Text>
+          </View>
 
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>
-            Quick Actions
-          </Text>
+          <View style={styles.activeInfo}>
+            <Text style={styles.serviceName}>
+              General Consultation
+            </Text>
+
+            <Text style={styles.statusText}>
+              Waiting
+            </Text>
+          </View>
+
+          <View style={styles.waitInfo}>
+            <Text style={styles.positionLabel}>
+              POSITION
+            </Text>
+
+            <Text style={styles.positionValue}>
+              #06
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Estimated Wait */}
+        <View style={styles.statsRow}>
+
+          <View style={styles.statCard}>
+            <Ionicons
+              name="time-outline"
+              size={21}
+              color="#B8FF00"
+            />
+
+            <View style={styles.statText}>
+              <Text style={styles.statLabel}>
+                EST. WAIT
+              </Text>
+
+              <Text style={styles.statValue}>
+                18 min
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.statCard}>
+            <Ionicons
+              name="people-outline"
+              size={21}
+              color="#B8FF00"
+            />
+
+            <View style={styles.statText}>
+              <Text style={styles.statLabel}>
+                AHEAD
+              </Text>
+
+              <Text style={styles.statValue}>
+                5 people
+              </Text>
+            </View>
+          </View>
+
         </View>
 
-        <View style={styles.actions}>
-          <Pressable
-            style={styles.action}
-            onPress={() => router.push("/services")}
+        {/* Quick Actions */}
+        <Text style={styles.sectionTitle}>
+          Quick Actions
+        </Text>
+
+        <View style={styles.quickRow}>
+
+          <TouchableOpacity
+            style={styles.quickCard}
+            onPress={() => router.push('/queue')}
           >
-            <View style={styles.actionIcon}>
+            <View style={styles.quickIcon}>
               <Ionicons
-                name="ticket-outline"
+                name="list-outline"
                 size={22}
-                color={COLORS.neon}
+                color="#B8FF00"
               />
             </View>
 
-            <Text style={styles.actionTitle}>
-              Get Token
-            </Text>
-
-            <Text style={styles.actionText}>
-              Join a queue
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.action}
-            onPress={() => router.push("/queue")}
-          >
-            <View style={styles.actionIcon}>
-              <Ionicons
-                name="pulse-outline"
-                size={22}
-                color={COLORS.blue}
-              />
-            </View>
-
-            <Text style={styles.actionTitle}>
+            <Text style={styles.quickTitle}>
               Live Queue
             </Text>
 
-            <Text style={styles.actionText}>
-              Track position
+            <Text style={styles.quickSubtitle}>
+              View current queue
             </Text>
-          </Pressable>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickCard}
+            onPress={() => router.push('/notifications')}
+          >
+            <View style={styles.quickIcon}>
+              <Ionicons
+                name="notifications-outline"
+                size={22}
+                color="#B8FF00"
+              />
+            </View>
+
+            <Text style={styles.quickTitle}>
+              Alerts
+            </Text>
+
+            <Text style={styles.quickSubtitle}>
+              Queue updates
+            </Text>
+          </TouchableOpacity>
+
         </View>
+
+        <View style={{ height: 100 }} />
+
       </ScrollView>
 
-      <BottomNav />
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+
+        {/* Home */}
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/')}
+        >
+          <Ionicons
+            name="home"
+            size={22}
+            color="#B8FF00"
+          />
+
+          <Text style={[styles.navText, styles.activeNavText]}>
+            Home
+          </Text>
+        </TouchableOpacity>
+
+        {/* My Token */}
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/my-token')}
+        >
+          <Ionicons
+            name="ticket-outline"
+            size={22}
+            color="#777"
+          />
+
+          <Text style={styles.navText}>
+            My Token
+          </Text>
+        </TouchableOpacity>
+
+        {/* Alerts */}
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/notifications')}
+        >
+          <Ionicons
+            name="notifications-outline"
+            size={22}
+            color="#777"
+          />
+
+          <Text style={styles.navText}>
+            Alerts
+          </Text>
+        </TouchableOpacity>
+
+        {/* Profile */}
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => router.push('/profile')}
+        >
+          <Ionicons
+            name="person-outline"
+            size={22}
+            color="#777"
+          />
+
+          <Text style={styles.navText}>
+            Profile
+          </Text>
+        </TouchableOpacity>
+
+      </View>
     </View>
   );
 }
@@ -146,170 +312,321 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#080A0C',
   },
 
   content: {
     paddingHorizontal: 20,
-    paddingTop: 58,
-    paddingBottom: 20,
+    paddingTop: 55,
+    paddingBottom: 30,
   },
 
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 24,
   },
 
-  small: {
-    color: COLORS.neon,
+  greeting: {
+    color: '#777C82',
     fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1.5,
+    letterSpacing: 2,
+    fontWeight: '600',
   },
 
-  title: {
-    color: COLORS.white,
-    fontSize: 23,
-    fontWeight: "800",
-    marginTop: 5,
+  logoText: {
+    color: '#FFFFFF',
+    fontSize: 25,
+    fontWeight: '800',
+    marginTop: 4,
   },
 
-  notification: {
-    width: 46,
-    height: 46,
-    borderRadius: 15,
-    backgroundColor: COLORS.surface,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
+  notificationButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#15181B',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   notificationDot: {
-    position: "absolute",
-    width: 7,
-    height: 7,
-    borderRadius: 5,
-    backgroundColor: COLORS.neon,
+    position: 'absolute',
     top: 10,
     right: 11,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#B8FF00',
   },
 
-  hero: {
-    backgroundColor: COLORS.surface2,
-    borderRadius: 28,
-    padding: 24,
-    overflow: "hidden",
+  welcomeCard: {
+    backgroundColor: '#111518',
     borderWidth: 1,
-    borderColor: "rgba(32,230,210,0.20)",
+    borderColor: '#252A2D',
+    borderRadius: 22,
+    padding: 20,
+    minHeight: 190,
+    marginBottom: 16,
+    flexDirection: 'row',
+    overflow: 'hidden',
   },
 
-  heroGlow: {
-    position: "absolute",
-    width: 170,
-    height: 170,
-    borderRadius: 100,
-    backgroundColor: "rgba(32,230,210,0.06)",
-    right: -50,
-    top: -60,
+  welcomeContent: {
+    flex: 1,
   },
 
-  heroSmall: {
-    color: COLORS.neon,
+  welcomeSmall: {
+    color: '#B8FF00',
     fontSize: 10,
-    fontWeight: "800",
+    fontWeight: '700',
     letterSpacing: 1.5,
+    marginBottom: 12,
   },
 
-  heroTitle: {
-    color: COLORS.white,
-    fontSize: 30,
-    lineHeight: 35,
-    fontWeight: "900",
-    marginTop: 10,
+  welcomeTitle: {
+    color: '#FFFFFF',
+    fontSize: 25,
+    lineHeight: 32,
+    fontWeight: '800',
   },
 
-  heroText: {
-    color: COLORS.secondary,
-    fontSize: 13,
-    lineHeight: 20,
+  greenText: {
+    color: '#B8FF00',
+  },
+
+  welcomeDescription: {
+    color: '#777C82',
+    fontSize: 11,
+    lineHeight: 17,
     marginTop: 12,
-    maxWidth: 290,
+    maxWidth: 245,
   },
 
-  primaryButton: {
-    height: 52,
-    borderRadius: 16,
-    backgroundColor: COLORS.neon,
-    marginTop: 22,
-    paddingHorizontal: 18,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 9,
+  pulseCircle: {
+    position: 'absolute',
+    right: -18,
+    bottom: -20,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#1A2210',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
-  primaryText: {
-    color: "#06100F",
-    fontWeight: "900",
-    fontSize: 14,
+  tokenButton: {
+    backgroundColor: '#B8FF00',
+    borderRadius: 17,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 27,
+  },
+
+  tokenIcon: {
+    width: 43,
+    height: 43,
+    borderRadius: 13,
+    backgroundColor: '#D2FF5A',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  tokenTextContainer: {
+    flex: 1,
+    marginLeft: 13,
+  },
+
+  tokenTitle: {
+    color: '#080A0C',
+    fontSize: 15,
+    fontWeight: '800',
+  },
+
+  tokenSubtitle: {
+    color: '#303800',
+    fontSize: 10,
+    marginTop: 3,
   },
 
   sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 28,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 12,
   },
 
   sectionTitle: {
-    color: COLORS.white,
+    color: '#FFFFFF',
     fontSize: 17,
-    fontWeight: "800",
+    fontWeight: '700',
+    marginBottom: 12,
   },
 
-  link: {
-    color: COLORS.neon,
-    fontSize: 12,
-    fontWeight: "700",
+  viewText: {
+    color: '#B8FF00',
+    fontSize: 11,
+    fontWeight: '600',
   },
 
-  actions: {
-    flexDirection: "row",
-    gap: 12,
-  },
-
-  action: {
-    flex: 1,
-    backgroundColor: COLORS.card,
-    borderRadius: 20,
+  activeCard: {
+    backgroundColor: '#101316',
     borderWidth: 1,
-    borderColor: COLORS.border,
-    padding: 16,
+    borderColor: '#30372B',
+    borderRadius: 18,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
   },
 
-  actionIcon: {
+  tokenBadge: {
+    width: 58,
+    height: 58,
+    borderRadius: 16,
+    backgroundColor: '#1B2410',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  tokenBadgeText: {
+    color: '#B8FF00',
+    fontSize: 14,
+    fontWeight: '800',
+  },
+
+  activeInfo: {
+    flex: 1,
+    marginLeft: 13,
+  },
+
+  serviceName: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+
+  statusText: {
+    color: '#B8FF00',
+    fontSize: 10,
+    marginTop: 5,
+  },
+
+  waitInfo: {
+    alignItems: 'flex-end',
+  },
+
+  positionLabel: {
+    color: '#666B70',
+    fontSize: 8,
+    letterSpacing: 1,
+  },
+
+  positionValue: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '800',
+    marginTop: 3,
+  },
+
+  statsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 25,
+  },
+
+  statCard: {
+    flex: 1,
+    backgroundColor: '#101316',
+    borderWidth: 1,
+    borderColor: '#202529',
+    borderRadius: 16,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  statText: {
+    marginLeft: 10,
+  },
+
+  statLabel: {
+    color: '#666B70',
+    fontSize: 8,
+    letterSpacing: 1,
+  },
+
+  statValue: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: 4,
+  },
+
+  quickRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+
+  quickCard: {
+    flex: 1,
+    backgroundColor: '#101316',
+    borderWidth: 1,
+    borderColor: '#202529',
+    borderRadius: 17,
+    padding: 15,
+  },
+
+  quickIcon: {
     width: 42,
     height: 42,
     borderRadius: 13,
-    backgroundColor: "rgba(32,230,210,0.08)",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#191F15',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
   },
 
-  actionTitle: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: "800",
-    marginTop: 12,
+  quickTitle: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
   },
 
-  actionText: {
-    color: COLORS.secondary,
-    fontSize: 11,
+  quickSubtitle: {
+    color: '#666B70',
+    fontSize: 9,
     marginTop: 4,
+  },
+
+  bottomNav: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 75,
+    backgroundColor: '#0D0F11',
+    borderTopWidth: 1,
+    borderTopColor: '#202326',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  navText: {
+    color: '#666B70',
+    fontSize: 10,
+    marginTop: 4,
+  },
+
+  activeNavText: {
+    color: '#B8FF00',
   },
 });

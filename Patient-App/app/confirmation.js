@@ -1,315 +1,541 @@
+import React from 'react';
 import {
   View,
   Text,
-  Pressable,
   StyleSheet,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
-
-import { COLORS } from "../constants/theme";
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { router, useLocalSearchParams } from 'expo-router';
 
 export default function Confirmation() {
-  const { service } = useLocalSearchParams();
+  const { service, wait } = useLocalSearchParams();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.success}>
-          <Ionicons
-            name="checkmark"
-            size={34}
-            color={COLORS.neon}
-          />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Ionicons
+              name="arrow-back"
+              size={22}
+              color="#FFFFFF"
+            />
+          </TouchableOpacity>
+
+          <View>
+            <Text style={styles.headerTitle}>
+              Confirm Token
+            </Text>
+
+            <Text style={styles.headerSubtitle}>
+              Review your queue details
+            </Text>
+          </View>
         </View>
 
-        <Text style={styles.small}>
-          TOKEN CONFIRMED
-        </Text>
+        {/* Progress */}
+        <View style={styles.progress}>
+          <View style={styles.progressDone}>
+            <Ionicons
+              name="checkmark"
+              size={16}
+              color="#071014"
+            />
+          </View>
 
-        <Text style={styles.title}>
-          You're in the queue
-        </Text>
+          <View style={styles.progressLine} />
 
-        <View style={styles.tokenCard}>
-          <Text style={styles.tokenLabel}>
-            YOUR TOKEN
+          <View style={styles.progressActive}>
+            <Text style={styles.progressNumber}>
+              2
+            </Text>
+          </View>
+
+          <View style={styles.progressLine} />
+
+          <View style={styles.progressStep}>
+            <Text style={styles.progressStepNumber}>
+              3
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.progressLabels}>
+          <Text style={styles.doneLabel}>Service</Text>
+          <Text style={styles.activeLabel}>Details</Text>
+          <Text style={styles.stepLabel}>Token</Text>
+        </View>
+
+        {/* Main */}
+        <View style={styles.content}>
+
+          <Text style={styles.title}>
+            Almost there
           </Text>
 
-          <Text style={styles.token}>A-026</Text>
+          <Text style={styles.description}>
+            Please confirm the following details before
+            joining the queue.
+          </Text>
 
-          <View style={styles.status}>
-            <View style={styles.dot} />
-            <Text style={styles.statusText}>
-              WAITING
+          {/* Service Card */}
+          <View style={styles.card}>
+
+            <View style={styles.cardHeader}>
+              <View style={styles.iconBox}>
+                <Ionicons
+                  name="medical-outline"
+                  size={25}
+                  color="#20E6D2"
+                />
+              </View>
+
+              <View style={styles.cardHeaderText}>
+                <Text style={styles.smallLabel}>
+                  SELECTED SERVICE
+                </Text>
+
+                <Text style={styles.serviceName}>
+                  {service || 'General Consultation'}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.detailsRow}>
+
+              <View style={styles.detail}>
+                <Ionicons
+                  name="people-outline"
+                  size={18}
+                  color="#20E6D2"
+                />
+
+                <View>
+                  <Text style={styles.detailLabel}>
+                    PEOPLE IN QUEUE
+                  </Text>
+
+                  <Text style={styles.detailValue}>
+                    5 people
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.detail}>
+                <Ionicons
+                  name="time-outline"
+                  size={18}
+                  color="#20E6D2"
+                />
+
+                <View>
+                  <Text style={styles.detailLabel}>
+                    EST. WAIT
+                  </Text>
+
+                  <Text style={styles.detailValue}>
+                    {wait || '18 min'}
+                  </Text>
+                </View>
+              </View>
+
+            </View>
+          </View>
+
+          {/* Important Notice */}
+          <View style={styles.notice}>
+
+            <View style={styles.noticeIcon}>
+              <Ionicons
+                name="information-circle-outline"
+                size={20}
+                color="#20E6D2"
+              />
+            </View>
+
+            <View style={styles.noticeContent}>
+              <Text style={styles.noticeTitle}>
+                Before you confirm
+              </Text>
+
+              <Text style={styles.noticeText}>
+                You will receive a digital token and your
+                live queue position. Please arrive at the
+                hospital before your turn.
+              </Text>
+            </View>
+
+          </View>
+
+          {/* Confirmation */}
+          <View style={styles.confirmBox}>
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={22}
+              color="#20E6D2"
+            />
+
+            <Text style={styles.confirmText}>
+              Your token will be generated instantly.
             </Text>
           </View>
 
-          <View style={styles.line} />
-
-          <Text style={styles.service}>{service}</Text>
-
-          <View style={styles.row}>
-            <View>
-              <Text style={styles.label}>
-                POSITION
-              </Text>
-
-              <Text style={styles.value}>#05</Text>
-            </View>
-
-            <View>
-              <Text style={styles.label}>
-                EST. WAIT
-              </Text>
-
-              <Text style={styles.neon}>18 min</Text>
-            </View>
-
-            <View>
-              <Text style={styles.label}>
-                COUNTER
-              </Text>
-
-              <Text style={styles.value}>01</Text>
-            </View>
-          </View>
         </View>
 
-        <View style={styles.qr}>
-          <View style={styles.qrBox}>
-            <Text style={styles.qrText}>QR</Text>
-          </View>
+        {/* Bottom */}
+        <View style={styles.bottom}>
 
-          <View style={{ flex: 1 }}>
-            <Text style={styles.qrTitle}>
-              Your digital token is ready
-            </Text>
+          <TouchableOpacity
+            style={styles.confirmButton}
+            activeOpacity={0.85}
+            onPress={() =>
+              router.push({
+                pathname: '/my-token',
+                params: {
+                  service:
+                    service || 'General Consultation',
+                  wait: wait || '18 min',
+                  token: 'A-027',
+                },
+              })
+            }
+          >
+            <Ionicons
+              name="ticket-outline"
+              size={20}
+              color="#071014"
+            />
 
-            <Text style={styles.qrSub}>
-              Keep this token available while waiting.
+            <Text style={styles.confirmButtonText}>
+              Confirm & Get Token
             </Text>
-          </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={() => router.back()}
+          >
+            <Text style={styles.cancelText}>
+              Change Service
+            </Text>
+          </TouchableOpacity>
+
         </View>
+
       </View>
-
-      <View style={styles.bottom}>
-        <Pressable
-          style={styles.primary}
-          onPress={() => router.replace("/my-token")}
-        >
-          <Text style={styles.primaryText}>
-            View My Token
-          </Text>
-        </Pressable>
-
-        <Pressable
-          style={styles.secondary}
-          onPress={() => router.replace("/queue")}
-        >
-          <Text style={styles.secondaryText}>
-            View Live Queue
-          </Text>
-        </Pressable>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#070A0F',
+  },
+
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: '#070A0F',
   },
 
-  content: {
-    padding: 20,
-    paddingTop: 65,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 18,
+    gap: 14,
   },
 
-  success: {
-    width: 62,
-    height: 62,
-    borderRadius: 22,
-    backgroundColor: "rgba(32,230,210,0.10)",
+  backButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 13,
+    backgroundColor: '#101720',
     borderWidth: 1,
-    borderColor: "rgba(32,230,210,0.25)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
+    borderColor: '#1B2832',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  small: {
-    color: COLORS.neon,
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 1.5,
+  headerTitle: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '800',
   },
 
-  title: {
-    color: COLORS.white,
-    fontSize: 29,
-    fontWeight: "900",
-    marginTop: 7,
-  },
-
-  tokenCard: {
-    marginTop: 25,
-    backgroundColor: COLORS.surface2,
-    borderRadius: 28,
-    padding: 24,
-    borderWidth: 1,
-    borderColor: "rgba(32,230,210,0.25)",
-    alignItems: "center",
-  },
-
-  tokenLabel: {
-    color: COLORS.secondary,
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 1.3,
-  },
-
-  token: {
-    color: COLORS.white,
-    fontSize: 54,
-    fontWeight: "900",
+  headerSubtitle: {
+    color: '#7D8996',
+    fontSize: 12,
     marginTop: 3,
   },
 
-  status: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(39,230,165,0.08)",
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
+  progress: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
     marginTop: 8,
   },
 
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 5,
-    backgroundColor: COLORS.success,
-    marginRight: 6,
+  progressDone: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#20E6D2',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  statusText: {
-    color: COLORS.success,
-    fontSize: 10,
-    fontWeight: "800",
+  progressActive: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#20E6D2',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  line: {
-    width: "100%",
-    height: 1,
-    backgroundColor: COLORS.border,
-    marginVertical: 20,
-  },
-
-  service: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-
-  row: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
-
-  label: {
-    color: COLORS.muted,
-    fontSize: 9,
-    fontWeight: "700",
-  },
-
-  value: {
-    color: COLORS.white,
-    fontSize: 13,
-    fontWeight: "800",
-    marginTop: 5,
-  },
-
-  neon: {
-    color: COLORS.neon,
-    fontSize: 13,
-    fontWeight: "800",
-    marginTop: 5,
-  },
-
-  qr: {
-    marginTop: 16,
-    backgroundColor: COLORS.card,
-    borderRadius: 20,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
+  progressStep: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#121A22',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: '#26323C',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  qrBox: {
-    width: 58,
-    height: 58,
-    backgroundColor: COLORS.white,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10,
+  progressNumber: {
+    color: '#071014',
+    fontSize: 13,
+    fontWeight: '800',
   },
 
-  qrText: {
-    color: "#111",
-    fontSize: 18,
-    fontWeight: "900",
+  progressStepNumber: {
+    color: '#66737F',
+    fontSize: 13,
+    fontWeight: '700',
   },
 
-  qrTitle: {
-    color: COLORS.white,
-    fontSize: 12,
-    fontWeight: "700",
+  progressLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#20E6D2',
+    marginHorizontal: 8,
   },
 
-  qrSub: {
-    color: COLORS.secondary,
-    fontSize: 10,
+  progressLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 22,
+    marginTop: 7,
+  },
+
+  doneLabel: {
+    color: '#20E6D2',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+
+  activeLabel: {
+    color: '#20E6D2',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+
+  stepLabel: {
+    color: '#66737F',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+
+  content: {
+    paddingHorizontal: 20,
+    paddingTop: 30,
+  },
+
+  title: {
+    color: '#FFFFFF',
+    fontSize: 25,
+    fontWeight: '900',
+  },
+
+  description: {
+    color: '#7D8996',
+    fontSize: 13,
+    lineHeight: 19,
+    marginTop: 7,
+    maxWidth: 480,
+  },
+
+  card: {
+    backgroundColor: '#101820',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#1D2933',
+    padding: 18,
+    marginTop: 22,
+  },
+
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  iconBox: {
+    width: 50,
+    height: 50,
+    borderRadius: 14,
+    backgroundColor: '#10282C',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  },
+
+  cardHeaderText: {
+    flex: 1,
+  },
+
+  smallLabel: {
+    color: '#20E6D2',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+
+  serviceName: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '800',
+    marginTop: 4,
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: '#1D2933',
+    marginVertical: 18,
+  },
+
+  detailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  detail: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 9,
+    flex: 1,
+  },
+
+  detailLabel: {
+    color: '#66737F',
+    fontSize: 8,
+    fontWeight: '800',
+    letterSpacing: 0.7,
+  },
+
+  detailValue: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: 3,
+  },
+
+  notice: {
+    flexDirection: 'row',
+    backgroundColor: '#0D171D',
+    borderWidth: 1,
+    borderColor: '#1B3439',
+    borderRadius: 16,
+    padding: 15,
+    marginTop: 16,
+  },
+
+  noticeIcon: {
+    marginRight: 11,
+  },
+
+  noticeContent: {
+    flex: 1,
+  },
+
+  noticeTitle: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+
+  noticeText: {
+    color: '#71808C',
+    fontSize: 11,
+    lineHeight: 17,
     marginTop: 5,
-    lineHeight: 15,
   },
 
-  bottom: {
-    padding: 20,
+  confirmBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#0D141B',
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 14,
     gap: 10,
   },
 
-  primary: {
+  confirmText: {
+    color: '#84919C',
+    fontSize: 11,
+    flex: 1,
+  },
+
+  bottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 18,
+    backgroundColor: '#070A0F',
+    borderTopWidth: 1,
+    borderTopColor: '#111A22',
+  },
+
+  confirmButton: {
     height: 54,
-    borderRadius: 17,
-    backgroundColor: COLORS.neon,
-    alignItems: "center",
-    justifyContent: "center",
+    borderRadius: 15,
+    backgroundColor: '#20E6D2',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 9,
   },
 
-  primaryText: {
-    color: "#06100F",
-    fontWeight: "900",
+  confirmButtonText: {
+    color: '#071014',
+    fontSize: 14,
+    fontWeight: '900',
   },
 
-  secondary: {
-    height: 54,
-    borderRadius: 17,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: "center",
-    justifyContent: "center",
+  cancelButton: {
+    alignItems: 'center',
+    paddingTop: 12,
   },
 
-  secondaryText: {
-    color: COLORS.white,
-    fontWeight: "700",
+  cancelText: {
+    color: '#7D8996',
+    fontSize: 12,
+    fontWeight: '700',
   },
 });
