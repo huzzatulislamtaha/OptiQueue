@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "../constants/theme";
+import { colors, fonts } from "../constants/theme";
 
 export default function ServiceCard({
   icon,
@@ -11,36 +11,23 @@ export default function ServiceCard({
 }) {
   return (
     <Pressable
-      style={({ pressed }) => [
-        styles.card,
-        pressed && { opacity: 0.85 },
-      ]}
+      style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}
       onPress={onPress}
     >
       <View style={styles.icon}>
-        <Ionicons
-          name={icon}
-          size={25}
-          color={COLORS.neon}
-        />
+        <Ionicons name={icon} size={25} color={colors.neon} />
       </View>
 
       <View style={styles.info}>
         <Text style={styles.title}>{title}</Text>
-
-        <Text style={styles.waiting}>
-          {waiting} patients waiting
-        </Text>
-
-        <Text style={styles.time}>
-          Estimated wait · {waitTime}
-        </Text>
+        <Text style={styles.waiting}>{waiting} patients waiting</Text>
+        <Text style={styles.time}>Estimated wait · {waitTime}</Text>
       </View>
 
       <Ionicons
         name="chevron-forward"
         size={20}
-        color={COLORS.secondary}
+        color={colors.secondary}
       />
     </Pressable>
   );
@@ -48,9 +35,9 @@ export default function ServiceCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.card,
+    backgroundColor: colors.card,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: colors.border,
     borderRadius: 20,
     padding: 16,
     flexDirection: "row",
@@ -62,7 +49,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 16,
-    backgroundColor: "rgba(32,230,210,0.09)",
+    backgroundColor: colors.neonBg,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 14,
@@ -73,21 +60,22 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: COLORS.white,
+    color: colors.white,
     fontSize: 15,
-    fontWeight: "700",
+    fontFamily: fonts.semiBold,
   },
 
   waiting: {
-    color: COLORS.secondary,
+    color: colors.secondary,
     fontSize: 12,
     marginTop: 4,
+    fontFamily: fonts.regular,
   },
 
   time: {
-    color: COLORS.neon,
+    color: colors.neon,
     fontSize: 11,
     marginTop: 4,
+    fontFamily: fonts.regular,
   },
 });
-

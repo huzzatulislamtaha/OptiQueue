@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -7,89 +7,66 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useToken } from '../context/TokenContext';
-import { formatToken } from '../constants/services';
-import BottomNav from '../components/BottomNav';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
+import BottomNav from "../components/BottomNav";
+import { colors, fonts } from "../constants/theme";
 
 export default function MyToken() {
-  const {
-    activeToken,
-    cancelToken,
-    getTokenPosition,
-    getTokenStatus,
-    getEstimatedWait,
-    getServiceStats,
-  } = useToken();
+  const params = useLocalSearchParams();
 
-  if (!activeToken) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
-            <View>
-              <Text style={styles.headerTitle}>My Token</Text>
-              <Text style={styles.headerSubtitle}>No active token</Text>
-            </View>
-          </View>
+  const token = params.token || "A-027";
+  const service = params.service || "General Consultation";
+  const wait = params.wait || "18 min";
 
-          <View style={styles.emptyState}>
-            <View style={styles.emptyIcon}>
-              <Ionicons name="ticket-outline" size={40} color="#444" />
-            </View>
-            <Text style={styles.emptyTitle}>No Active Token</Text>
-            <Text style={styles.emptyText}>
-              Get a digital token to join the hospital queue and track your wait time
-              in real time.
-            </Text>
-            <TouchableOpacity
-              style={styles.getTokenButton}
-              onPress={() => router.push('/get-token')}
-            >
-              <Ionicons name="add-circle-outline" size={20} color="#071014" />
-              <Text style={styles.getTokenButtonText}>Get Digital Token</Text>
-            </TouchableOpacity>
-          </View>
-
-          <BottomNav />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  const token = formatToken(activeToken.prefix, activeToken.number);
-  const position = getTokenPosition(activeToken);
-  const status = getTokenStatus(activeToken);
-  const wait = getEstimatedWait(activeToken.serviceId, position);
-  const stats = getServiceStats(activeToken.serviceId);
-  const isServing = status === 'serving';
+  const [cancelled, setCancelled] = React.useState(false);
 
   const handleCancelToken = () => {
-    Alert.alert('Cancel Token', `Are you sure you want to cancel token ${token}?`, [
-      { text: 'Keep Token', style: 'cancel' },
-      {
-        text: 'Cancel Token',
-        style: 'destructive',
-        onPress: () => cancelToken(),
-      },
-    ]);
+    Alert.alert(
+      "Cancel Token",
+      `Are you sure you want to cancel token ${token}?`,
+      [
+        {
+          text: "Keep Token",
+          style: "cancel",
+        },
+        {
+          text: "Cancel Token",
+          style: "destructive",
+          onPress: () => {
+            setCancelled(true);
+          },
+        },
+      ]
+    );
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+
+        {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name="arrow-back"
+              size={21}
+              color={colors.textPrimary}
+            />
           </TouchableOpacity>
-          <View>
+
+          <View style={styles.headerInfo}>
             <Text style={styles.headerTitle}>My Token</Text>
-            <Text style={styles.headerSubtitle}>Your active queue token</Text>
+            <Text style={styles.headerSubtitle}>
+              {cancelled
+                ? "Token has been cancelled"
+                : "Your active queue token"}
+            </Text>
           </View>
         </View>
 
@@ -97,360 +74,613 @@ export default function MyToken() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.content}
         >
-          <View style={[styles.statusRow, isServing && styles.servingStatusRow]}>
-            <View style={[styles.statusDot, isServing && styles.servingDot]} />
-            <Text style={[styles.statusText, isServing && styles.servingStatusText]}>
-              {isServing ? 'YOUR TURN' : 'WAITING'}
+          {/* Status */}
+          <View
+            style={[
+              styles.statusRow,
+              cancelled && styles.cancelledStatusRow,
+            ]}
+          >
+            <View
+              style={[
+                styles.statusDot,
+                cancelled && styles.cancelledDot,
+              ]}
+            />
+            <Text
+              style={[
+                styles.statusText,
+                cancelled && styles.cancelledStatusText,
+              ]}
+            >
+              {cancelled ? "CANCELLED" : "WAITING"}
             </Text>
           </View>
 
-          <View style={[styles.tokenCard, isServing && styles.servingTokenCard]}>
-            <Text style={styles.tokenLabel}>YOUR TOKEN</Text>
-            <Text style={styles.tokenNumber}>{token}</Text>
-            <View style={styles.divider} />
-            <Text style={styles.serviceLabel}>SERVICE</Text>
-            <Text style={styles.serviceName}>{activeToken.serviceName}</Text>
-            <Text style={styles.counterText}>{activeToken.counter}</Text>
-          </View>
-
-          <Text style={styles.sectionTitle}>Queue Status</Text>
-
-          <View style={styles.queueCard}>
-            <View style={styles.queueItem}>
-              <View style={styles.iconBox}>
-                <Ionicons name="people-outline" size={21} color="#20E6D2" />
-              </View>
+          {/* Token Card */}
+          <View
+            style={[
+              styles.tokenCard,
+              cancelled && styles.cancelledTokenCard,
+            ]}
+          >
+            <View style={styles.tokenTopRow}>
               <View>
-                <Text style={styles.queueLabel}>YOUR POSITION</Text>
-                <Text style={styles.queueValue}>
-                  {isServing ? 'Now' : `#${String(position).padStart(2, '0')}`}
+                <Text style={styles.tokenLabel}>YOUR TOKEN</Text>
+                <Text
+                  style={[
+                    styles.tokenNumber,
+                    cancelled && styles.cancelledTokenNumber,
+                  ]}
+                >
+                  {token}
                 </Text>
               </View>
+
+              <View
+                style={[
+                  styles.tokenIcon,
+                  cancelled && styles.cancelledTokenIcon,
+                ]}
+              >
+                <Ionicons
+                  name="ticket-outline"
+                  size={25}
+                  color={cancelled ? colors.cancelledIcon : colors.primary}
+                />
+              </View>
             </View>
 
-            <View style={styles.verticalDivider} />
+            <View style={styles.divider} />
 
-            <View style={styles.queueItem}>
-              <View style={styles.iconBox}>
-                <Ionicons name="time-outline" size={21} color="#20E6D2" />
-              </View>
-              <View>
-                <Text style={styles.queueLabel}>EST. WAIT</Text>
-                <Text style={styles.queueValue}>{wait}</Text>
-              </View>
-            </View>
+            <Text style={styles.serviceLabel}>SERVICE</Text>
+            <Text style={styles.serviceName}>{service}</Text>
           </View>
 
-          <View style={styles.servingCard}>
-            <View style={styles.servingIcon}>
-              <Ionicons name="pulse-outline" size={22} color="#20E6D2" />
-            </View>
-            <View style={styles.servingInfo}>
-              <Text style={styles.servingLabel}>CURRENTLY SERVING</Text>
-              <Text style={styles.servingToken}>{stats.serving}</Text>
-            </View>
-            <View style={styles.liveBadge}>
-              <View style={styles.liveDot} />
-              <Text style={styles.liveText}>LIVE</Text>
-            </View>
-          </View>
+          {!cancelled ? (
+            <>
+              {/* Queue Status */}
+              <Text style={styles.sectionTitle}>Queue Status</Text>
 
-          {isServing ? (
-            <View style={styles.turnCard}>
-              <Ionicons name="checkmark-circle" size={24} color="#20E6D2" />
-              <Text style={styles.turnText}>
-                Please proceed to {activeToken.counter} now!
-              </Text>
-            </View>
+              <View style={styles.queueCard}>
+                {/* Position */}
+                <View style={styles.queueItem}>
+                  <View style={styles.iconBox}>
+                    <Ionicons
+                      name="people-outline"
+                      size={20}
+                      color={colors.primary}
+                    />
+                  </View>
+                  <View>
+                    <Text style={styles.queueLabel}>YOUR POSITION</Text>
+                    <Text style={styles.queueValue}>#06</Text>
+                  </View>
+                </View>
+
+                <View style={styles.verticalDivider} />
+
+                {/* Wait */}
+                <View style={styles.queueItem}>
+                  <View style={styles.iconBox}>
+                    <Ionicons
+                      name="time-outline"
+                      size={20}
+                      color={colors.primary}
+                    />
+                  </View>
+                  <View>
+                    <Text style={styles.queueLabel}>EST. WAIT</Text>
+                    <Text style={styles.queueValue}>{wait}</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Currently Serving */}
+              <View style={styles.servingCard}>
+                <View style={styles.servingIcon}>
+                  <Ionicons
+                    name="pulse-outline"
+                    size={21}
+                    color={colors.primary}
+                  />
+                </View>
+
+                <View style={styles.servingInfo}>
+                  <Text style={styles.servingLabel}>CURRENTLY SERVING</Text>
+                  <Text style={styles.servingToken}>A-021</Text>
+                </View>
+
+                <View style={styles.liveBadge}>
+                  <View style={styles.liveDot} />
+                  <Text style={styles.liveText}>LIVE</Text>
+                </View>
+              </View>
+
+              {/* Message */}
+              <View style={styles.messageCard}>
+                <View style={styles.messageIcon}>
+                  <Ionicons
+                    name="notifications-outline"
+                    size={18}
+                    color={colors.primary}
+                  />
+                </View>
+                <Text style={styles.messageText}>
+                  Please stay nearby. Your queue position updates
+                  automatically.
+                </Text>
+              </View>
+
+              {/* Actions */}
+              <TouchableOpacity
+                style={styles.queueButton}
+                activeOpacity={0.85}
+                onPress={() => router.push("/queue")}
+              >
+                <Text style={styles.queueButtonText}>View Live Queue</Text>
+                <View style={styles.queueButtonIcon}>
+                  <Ionicons
+                    name="arrow-forward"
+                    size={17}
+                    color={colors.primary}
+                  />
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.cancelButton}
+                activeOpacity={0.8}
+                onPress={handleCancelToken}
+              >
+                <Text style={styles.cancelText}>Cancel Token</Text>
+              </TouchableOpacity>
+            </>
           ) : (
-            <View style={styles.messageCard}>
-              <Ionicons name="notifications-outline" size={20} color="#20E6D2" />
-              <Text style={styles.messageText}>
-                {position <= 2
-                  ? 'Almost your turn! Please stay nearby.'
-                  : 'Your queue position updates automatically every few seconds.'}
-              </Text>
-            </View>
+            <>
+              {/* Cancelled Message */}
+              <View style={styles.cancelledMessageCard}>
+                <View style={styles.cancelledIcon}>
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={29}
+                    color={colors.danger}
+                  />
+                </View>
+
+                <Text style={styles.cancelledTitle}>Token Cancelled</Text>
+                <Text style={styles.cancelledMessage}>
+                  Your token has been cancelled successfully. You can get a
+                  new digital token whenever you need one.
+                </Text>
+              </View>
+
+              {/* New Token */}
+              <TouchableOpacity
+                style={styles.newTokenButton}
+                activeOpacity={0.85}
+                onPress={() => router.push("/get-token")}
+              >
+                <Ionicons
+                  name="ticket-outline"
+                  size={20}
+                  color={colors.white}
+                />
+                <Text style={styles.newTokenButtonText}>Get New Token</Text>
+              </TouchableOpacity>
+            </>
           )}
 
-          <View style={{ height: 160 }} />
+          {/* Space for Bottom Navigation */}
+          <View style={{ height: 30 }} />
         </ScrollView>
 
-        <View style={styles.bottom}>
-          <TouchableOpacity
-            style={styles.queueButton}
-            activeOpacity={0.85}
-            onPress={() => router.push('/queue')}
-          >
-            <Ionicons name="pulse-outline" size={20} color="#071014" />
-            <Text style={styles.queueButtonText}>View Live Queue</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={handleCancelToken}>
-            <Text style={styles.cancelText}>Cancel Token</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Permanent Bottom Navigation */}
+        <BottomNav />
+
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#070A0F' },
-  container: { flex: 1, backgroundColor: '#070A0F' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 18,
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
   },
+
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    paddingBottom: 15,
+  },
+
   backButton: {
     width: 42,
     height: 42,
     borderRadius: 13,
-    backgroundColor: '#101720',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#1B2832',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
+    borderColor: colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 13,
   },
-  headerTitle: { color: '#FFFFFF', fontSize: 20, fontWeight: '800' },
-  headerSubtitle: { color: '#7D8996', fontSize: 12, marginTop: 3 },
-  content: { paddingHorizontal: 20, paddingTop: 8 },
-  emptyState: {
+
+  headerInfo: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 40,
-    paddingBottom: 100,
   },
-  emptyIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 24,
-    backgroundColor: '#101820',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
+
+  headerTitle: {
+    color: colors.textPrimary,
+    fontSize: 20,
+    fontFamily: fonts.bold,
   },
-  emptyTitle: { color: '#FFFFFF', fontSize: 20, fontWeight: '800' },
-  emptyText: {
-    color: '#7D8996',
-    fontSize: 13,
-    textAlign: 'center',
-    lineHeight: 20,
-    marginTop: 10,
+
+  headerSubtitle: {
+    color: colors.textMuted,
+    fontSize: 12,
+    marginTop: 3,
+    fontFamily: fonts.regular,
   },
-  getTokenButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#20E6D2',
-    borderRadius: 15,
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    marginTop: 24,
-    gap: 8,
+
+  content: {
+    paddingHorizontal: 20,
+    paddingTop: 6,
+    paddingBottom: 20,
   },
-  getTokenButtonText: { color: '#071014', fontSize: 14, fontWeight: '900' },
+
   statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    backgroundColor: '#0D211F',
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    backgroundColor: colors.primaryLight,
     borderWidth: 1,
-    borderColor: '#16423D',
+    borderColor: colors.statusBorder,
     borderRadius: 20,
-    paddingHorizontal: 13,
+    paddingHorizontal: 14,
     paddingVertical: 7,
   },
-  servingStatusRow: { backgroundColor: '#10282C', borderColor: '#20E6D2' },
+
+  cancelledStatusRow: {
+    backgroundColor: colors.dangerLight,
+    borderColor: colors.dangerBorder,
+  },
+
   statusDot: {
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#20E6D2',
+    backgroundColor: colors.primary,
     marginRight: 7,
   },
-  servingDot: { backgroundColor: '#27E6A5' },
-  statusText: { color: '#20E6D2', fontSize: 10, fontWeight: '900', letterSpacing: 1 },
-  servingStatusText: { color: '#27E6A5' },
+
+  cancelledDot: {
+    backgroundColor: colors.danger,
+  },
+
+  statusText: {
+    color: colors.primary,
+    fontSize: 10,
+    letterSpacing: 1,
+    fontFamily: fonts.bold,
+  },
+
+  cancelledStatusText: {
+    color: colors.danger,
+  },
+
   tokenCard: {
-    backgroundColor: '#101820',
+    backgroundColor: colors.white,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: '#1D2933',
+    borderColor: colors.cardBorder,
     marginTop: 16,
-    padding: 24,
-    alignItems: 'center',
+    padding: 22,
   },
-  servingTokenCard: { borderColor: '#20E6D2' },
+
+  cancelledTokenCard: {
+    borderColor: colors.dangerBorder,
+  },
+
+  tokenTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
   tokenLabel: {
-    color: '#20E6D2',
+    color: colors.primary,
     fontSize: 10,
-    fontWeight: '900',
     letterSpacing: 1.5,
+    fontFamily: fonts.bold,
   },
+
   tokenNumber: {
-    color: '#FFFFFF',
-    fontSize: 64,
-    fontWeight: '900',
+    color: colors.textPrimary,
+    fontSize: 56,
     letterSpacing: 2,
-    marginTop: 6,
+    marginTop: 3,
+    fontFamily: fonts.bold,
   },
+
+  cancelledTokenNumber: {
+    color: colors.cancelledText,
+  },
+
+  tokenIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  cancelledTokenIcon: {
+    backgroundColor: colors.cancelledBg,
+  },
+
   divider: {
-    width: '100%',
+    width: "100%",
     height: 1,
-    backgroundColor: '#1D2933',
-    marginVertical: 18,
+    backgroundColor: colors.divider,
+    marginVertical: 17,
   },
+
   serviceLabel: {
-    color: '#66737F',
+    color: colors.textMuted,
     fontSize: 9,
-    fontWeight: '800',
     letterSpacing: 1,
+    fontFamily: fonts.bold,
   },
+
   serviceName: {
-    color: '#FFFFFF',
+    color: colors.textPrimary,
     fontSize: 16,
-    fontWeight: '800',
     marginTop: 5,
-    textAlign: 'center',
+    fontFamily: fonts.bold,
   },
-  counterText: { color: '#66737F', fontSize: 11, marginTop: 6 },
+
   sectionTitle: {
-    color: '#FFFFFF',
+    color: colors.textPrimary,
     fontSize: 17,
-    fontWeight: '800',
     marginTop: 24,
     marginBottom: 12,
+    fontFamily: fonts.bold,
   },
+
   queueCard: {
-    backgroundColor: '#101820',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#1D2933',
+    borderColor: colors.border,
     borderRadius: 18,
-    padding: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
+    padding: 17,
+    flexDirection: "row",
+    alignItems: "center",
   },
-  queueItem: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+
+  queueItem: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   iconBox: {
     width: 43,
     height: 43,
     borderRadius: 13,
-    backgroundColor: '#10282C',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 11,
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
   },
+
   queueLabel: {
-    color: '#66737F',
+    color: colors.textMuted,
     fontSize: 8,
-    fontWeight: '800',
     letterSpacing: 0.7,
+    fontFamily: fonts.bold,
   },
-  queueValue: { color: '#FFFFFF', fontSize: 18, fontWeight: '900', marginTop: 3 },
+
+  queueValue: {
+    color: colors.textPrimary,
+    fontSize: 18,
+    marginTop: 3,
+    fontFamily: fonts.bold,
+  },
+
   verticalDivider: {
     width: 1,
     height: 42,
-    backgroundColor: '#1D2933',
-    marginHorizontal: 15,
+    backgroundColor: colors.border,
+    marginHorizontal: 14,
   },
+
   servingCard: {
     marginTop: 14,
-    backgroundColor: '#0D171D',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#1B3439',
+    borderColor: colors.cardBorder,
     borderRadius: 17,
     padding: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
+
   servingIcon: {
     width: 43,
     height: 43,
     borderRadius: 13,
-    backgroundColor: '#10282C',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
   },
-  servingInfo: { flex: 1 },
-  servingLabel: {
-    color: '#66737F',
-    fontSize: 8,
-    fontWeight: '800',
-    letterSpacing: 0.8,
+
+  servingInfo: {
+    flex: 1,
   },
-  servingToken: { color: '#FFFFFF', fontSize: 17, fontWeight: '900', marginTop: 3 },
+
+  servingLabel: {
+    color: colors.textMuted,
+    fontSize: 8,
+    letterSpacing: 0.8,
+    fontFamily: fonts.bold,
+  },
+
+  servingToken: {
+    color: colors.textPrimary,
+    fontSize: 17,
+    marginTop: 3,
+    fontFamily: fonts.bold,
+  },
+
   liveBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#102522',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     paddingHorizontal: 9,
     paddingVertical: 6,
   },
+
   liveDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#20E6D2',
+    backgroundColor: colors.primary,
     marginRight: 5,
   },
-  liveText: { color: '#20E6D2', fontSize: 8, fontWeight: '900' },
+
+  liveText: {
+    color: colors.primary,
+    fontSize: 8,
+    fontFamily: fonts.bold,
+  },
+
   messageCard: {
     marginTop: 14,
     padding: 14,
     borderRadius: 15,
-    backgroundColor: '#0D141B',
+    backgroundColor: colors.infoBg,
     borderWidth: 1,
-    borderColor: '#17242D',
-    flexDirection: 'row',
-    alignItems: 'center',
+    borderColor: colors.infoBorder,
+    flexDirection: "row",
+    alignItems: "center",
   },
+
+  messageIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   messageText: {
     flex: 1,
-    color: '#71808C',
+    color: colors.textSecondary,
     fontSize: 11,
     lineHeight: 17,
-    marginLeft: 10,
+    marginLeft: 9,
+    fontFamily: fonts.regular,
   },
-  turnCard: {
-    marginTop: 14,
-    padding: 16,
-    borderRadius: 15,
-    backgroundColor: '#10282C',
-    borderWidth: 1,
-    borderColor: '#20E6D2',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  turnText: { flex: 1, color: '#FFFFFF', fontSize: 13, fontWeight: '700' },
-  bottom: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#070A0F',
-    borderTopWidth: 1,
-    borderTopColor: '#111A22',
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 18,
-  },
+
   queueButton: {
     height: 54,
     borderRadius: 15,
-    backgroundColor: '#20E6D2',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 18,
+  },
+
+  queueButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontFamily: fonts.bold,
+  },
+
+  queueButtonIcon: {
+    width: 29,
+    height: 29,
+    borderRadius: 15,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 10,
+  },
+
+  cancelButton: {
+    alignItems: "center",
+    paddingTop: 12,
+  },
+
+  cancelText: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontFamily: fonts.semiBold,
+  },
+
+  cancelledMessageCard: {
+    marginTop: 25,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.dangerBorder,
+    borderRadius: 20,
+    padding: 24,
+    alignItems: "center",
+  },
+
+  cancelledIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 20,
+    backgroundColor: colors.dangerLight,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+
+  cancelledTitle: {
+    color: colors.textPrimary,
+    fontSize: 18,
+    fontFamily: fonts.bold,
+  },
+
+  cancelledMessage: {
+    color: colors.textMuted,
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: "center",
+    marginTop: 9,
+    fontFamily: fonts.regular,
+  },
+
+  newTokenButton: {
+    height: 54,
+    borderRadius: 15,
+    backgroundColor: colors.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 15,
     gap: 9,
   },
-  queueButtonText: { color: '#071014', fontSize: 14, fontWeight: '900' },
-  cancelButton: { alignItems: 'center', paddingTop: 12 },
-  cancelText: { color: '#7D8996', fontSize: 12, fontWeight: '700' },
+
+  newTokenButtonText: {
+    color: colors.white,
+    fontSize: 14,
+    fontFamily: fonts.bold,
+  },
 });

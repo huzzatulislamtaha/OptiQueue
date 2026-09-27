@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,320 +6,332 @@ import {
   ScrollView,
   TouchableOpacity,
   Switch,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+  SafeAreaView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { colors, fonts } from "../constants/theme";
 
 export default function Profile() {
   const [notifications, setNotifications] = React.useState(true);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
 
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
-        </TouchableOpacity>
-
-        <View>
-          <Text style={styles.title}>Profile</Text>
-          <Text style={styles.subtitle}>App preferences & information</Text>
-        </View>
-      </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
-
-        {/* App Identity */}
-        <View style={styles.profileCard}>
-          <View style={styles.logo}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+            activeOpacity={0.8}
+          >
             <Ionicons
-              name="medical"
-              size={30}
-              color="#B8FF00"
+              name="arrow-back"
+              size={21}
+              color={colors.textPrimary}
             />
-          </View>
+          </TouchableOpacity>
 
-          <View>
-            <Text style={styles.appName}>OptiQueue</Text>
-            <Text style={styles.appDescription}>
-              Smart Hospital Queue System
+          <View style={styles.headerInfo}>
+            <Text style={styles.title}>Profile</Text>
+            <Text style={styles.subtitle}>
+              App preferences & information
             </Text>
           </View>
         </View>
 
-        {/* Preferences */}
-        <Text style={styles.sectionTitle}>Preferences</Text>
-
-        <View style={styles.optionCard}>
-
-          <View style={styles.optionRow}>
-            <View style={styles.optionIcon}>
-              <Ionicons
-                name="notifications-outline"
-                size={21}
-                color="#B8FF00"
-              />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
+          {/* App Identity */}
+          <View style={styles.profileCard}>
+            <View style={styles.logo}>
+              <Ionicons name="medical" size={29} color={colors.primary} />
             </View>
 
-            <View style={styles.optionText}>
-              <Text style={styles.optionTitle}>
-                Notifications
+            <View style={styles.profileInfo}>
+              <Text style={styles.appName}>OptiQueue</Text>
+              <Text style={styles.appDescription}>
+                Smart Hospital Queue System
               </Text>
-              <Text style={styles.optionSubtitle}>
-                Receive queue updates
-              </Text>
-            </View>
 
-            <Switch
-              value={notifications}
-              onValueChange={setNotifications}
-              trackColor={{
-                false: '#303438',
-                true: '#536A1C',
-              }}
-              thumbColor={
-                notifications ? '#B8FF00' : '#777'
-              }
-            />
+              <View style={styles.systemBadge}>
+                <View style={styles.systemDot} />
+                <Text style={styles.systemText}>DIGITAL QUEUE</Text>
+              </View>
+            </View>
           </View>
 
-          <View style={styles.divider} />
+          {/* Preferences */}
+          <Text style={styles.sectionTitle}>Preferences</Text>
 
-          <TouchableOpacity style={styles.optionRow}>
-            <View style={styles.optionIcon}>
+          <View style={styles.optionCard}>
+            {/* Notifications */}
+            <View style={styles.optionRow}>
+              <View style={styles.optionIcon}>
+                <Ionicons
+                  name="notifications-outline"
+                  size={21}
+                  color={colors.primary}
+                />
+              </View>
+
+              <View style={styles.optionText}>
+                <Text style={styles.optionTitle}>Notifications</Text>
+                <Text style={styles.optionSubtitle}>
+                  Receive queue updates
+                </Text>
+              </View>
+
+              <Switch
+                value={notifications}
+                onValueChange={setNotifications}
+                trackColor={{
+                  false: colors.switchTrackOff,
+                  true: colors.switchTrackOn,
+                }}
+                thumbColor={
+                  notifications ? colors.primary : colors.white
+                }
+              />
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Language */}
+            <TouchableOpacity style={styles.optionRow} activeOpacity={0.7}>
+              <View style={styles.optionIcon}>
+                <Ionicons
+                  name="language-outline"
+                  size={21}
+                  color={colors.primary}
+                />
+              </View>
+
+              <View style={styles.optionText}>
+                <Text style={styles.optionTitle}>Language</Text>
+                <Text style={styles.optionSubtitle}>English</Text>
+              </View>
+
               <Ionicons
-                name="language-outline"
-                size={21}
-                color="#B8FF00"
+                name="chevron-forward"
+                size={19}
+                color={colors.chevron}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* App Information */}
+          <Text style={styles.sectionTitle}>App Information</Text>
+
+          <View style={styles.optionCard}>
+            {/* About */}
+            <TouchableOpacity style={styles.optionRow} activeOpacity={0.7}>
+              <View style={styles.optionIcon}>
+                <Ionicons
+                  name="information-circle-outline"
+                  size={21}
+                  color={colors.primary}
+                />
+              </View>
+
+              <View style={styles.optionText}>
+                <Text style={styles.optionTitle}>About OptiQueue</Text>
+                <Text style={styles.optionSubtitle}>
+                  Smart digital hospital queue management
+                </Text>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={19}
+                color={colors.chevron}
+              />
+            </TouchableOpacity>
+
+            <View style={styles.divider} />
+
+            {/* Privacy */}
+            <TouchableOpacity style={styles.optionRow} activeOpacity={0.7}>
+              <View style={styles.optionIcon}>
+                <Ionicons
+                  name="shield-checkmark-outline"
+                  size={21}
+                  color={colors.primary}
+                />
+              </View>
+
+              <View style={styles.optionText}>
+                <Text style={styles.optionTitle}>Privacy & Security</Text>
+                <Text style={styles.optionSubtitle}>
+                  Your queue information is protected
+                </Text>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={19}
+                color={colors.chevron}
+              />
+            </TouchableOpacity>
+
+            <View style={styles.divider} />
+
+            {/* Version */}
+            <View style={styles.optionRow}>
+              <View style={styles.optionIcon}>
+                <Ionicons
+                  name="code-slash-outline"
+                  size={21}
+                  color={colors.primary}
+                />
+              </View>
+
+              <View style={styles.optionText}>
+                <Text style={styles.optionTitle}>Version</Text>
+                <Text style={styles.optionSubtitle}>1.0.0</Text>
+              </View>
+
+              <View style={styles.versionBadge}>
+                <Text style={styles.versionText}>v1.0</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Support */}
+          <Text style={styles.sectionTitle}>Support</Text>
+
+          <TouchableOpacity style={styles.supportCard} activeOpacity={0.8}>
+            <View style={styles.supportIcon}>
+              <Ionicons
+                name="help-circle-outline"
+                size={23}
+                color={colors.primary}
               />
             </View>
 
             <View style={styles.optionText}>
-              <Text style={styles.optionTitle}>
-                Language
-              </Text>
+              <Text style={styles.optionTitle}>Help & Support</Text>
               <Text style={styles.optionSubtitle}>
-                English
+                Need help using OptiQueue?
               </Text>
             </View>
 
             <Ionicons
               name="chevron-forward"
-              size={20}
-              color="#555"
+              size={19}
+              color={colors.chevron}
             />
           </TouchableOpacity>
 
-        </View>
+          <View style={{ height: 110 }} />
+        </ScrollView>
 
-        {/* App Information */}
-        <Text style={styles.sectionTitle}>App Information</Text>
-
-        <View style={styles.optionCard}>
-
-          <TouchableOpacity style={styles.optionRow}>
-            <View style={styles.optionIcon}>
-              <Ionicons
-                name="information-circle-outline"
-                size={21}
-                color="#B8FF00"
-              />
-            </View>
-
-            <View style={styles.optionText}>
-              <Text style={styles.optionTitle}>
-                About OptiQueue
-              </Text>
-              <Text style={styles.optionSubtitle}>
-                Smart digital hospital queue management
-              </Text>
-            </View>
-
+        {/* Bottom Navigation */}
+        <View style={styles.bottomNav}>
+          {/* Home */}
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => router.push("/")}
+          >
             <Ionicons
-              name="chevron-forward"
-              size={20}
-              color="#555"
+              name="home-outline"
+              size={21}
+              color={colors.textMuted}
             />
+            <Text style={styles.navText}>Home</Text>
           </TouchableOpacity>
 
-          <View style={styles.divider} />
-
-          <TouchableOpacity style={styles.optionRow}>
-            <View style={styles.optionIcon}>
-              <Ionicons
-                name="shield-checkmark-outline"
-                size={21}
-                color="#B8FF00"
-              />
-            </View>
-
-            <View style={styles.optionText}>
-              <Text style={styles.optionTitle}>
-                Privacy & Security
-              </Text>
-              <Text style={styles.optionSubtitle}>
-                Your queue information is protected
-              </Text>
-            </View>
-
+          {/* My Token */}
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => router.push("/my-token")}
+          >
             <Ionicons
-              name="chevron-forward"
-              size={20}
-              color="#555"
+              name="ticket-outline"
+              size={21}
+              color={colors.textMuted}
             />
+            <Text style={styles.navText}>My Token</Text>
           </TouchableOpacity>
 
-          <View style={styles.divider} />
-
-          <View style={styles.optionRow}>
-            <View style={styles.optionIcon}>
-              <Ionicons
-                name="code-slash-outline"
-                size={21}
-                color="#B8FF00"
-              />
-            </View>
-
-            <View style={styles.optionText}>
-              <Text style={styles.optionTitle}>
-                Version
-              </Text>
-              <Text style={styles.optionSubtitle}>
-                1.0.0
-              </Text>
-            </View>
-          </View>
-
-        </View>
-
-        {/* Support */}
-        <Text style={styles.sectionTitle}>Support</Text>
-
-        <TouchableOpacity style={styles.supportCard}>
-          <View style={styles.supportIcon}>
+          {/* Alerts */}
+          <TouchableOpacity
+            style={styles.navItem}
+            onPress={() => router.push("/notifications")}
+          >
             <Ionicons
-              name="help-circle-outline"
-              size={23}
-              color="#B8FF00"
+              name="notifications-outline"
+              size={21}
+              color={colors.textMuted}
             />
-          </View>
+            <Text style={styles.navText}>Alerts</Text>
+          </TouchableOpacity>
 
-          <View style={styles.optionText}>
-            <Text style={styles.optionTitle}>
-              Help & Support
+          {/* Profile */}
+          <TouchableOpacity style={styles.navItem} activeOpacity={0.8}>
+            <View style={styles.activeNavIcon}>
+              <Ionicons name="person" size={20} color={colors.primary} />
+            </View>
+            <Text style={[styles.navText, styles.activeNavText]}>
+              Profile
             </Text>
-            <Text style={styles.optionSubtitle}>
-              Need help using OptiQueue?
-            </Text>
-          </View>
-
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color="#555"
-          />
-        </TouchableOpacity>
-
-        <View style={{ height: 110 }} />
-
-      </ScrollView>
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => router.push('/')}
-        >
-          <Ionicons
-            name="home-outline"
-            size={22}
-            color="#777"
-          />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => router.push('/my-token')}
-        >
-          <Ionicons
-            name="ticket-outline"
-            size={22}
-            color="#777"
-          />
-          <Text style={styles.navText}>My Token</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navItem}
-          onPress={() => router.push('/notifications')}
-        >
-          <Ionicons
-            name="notifications-outline"
-            size={22}
-            color="#777"
-          />
-          <Text style={styles.navText}>Alerts</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons
-            name="person"
-            size={22}
-            color="#B8FF00"
-          />
-          <Text style={[styles.navText, styles.activeNavText]}>
-            Profile
-          </Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
 
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+
   container: {
     flex: 1,
-    backgroundColor: '#080A0C',
+    backgroundColor: colors.background,
   },
 
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 55,
-    paddingBottom: 20,
+    paddingTop: 15,
+    paddingBottom: 16,
   },
 
   backButton: {
     width: 42,
     height: 42,
-    borderRadius: 21,
-    backgroundColor: '#15181B',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 14,
+    borderRadius: 13,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 13,
+  },
+
+  headerInfo: {
+    flex: 1,
   },
 
   title: {
-    color: '#FFFFFF',
-    fontSize: 23,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: 21,
+    fontFamily: fonts.bold,
   },
 
   subtitle: {
-    color: '#777C82',
+    color: colors.textMuted,
     fontSize: 12,
     marginTop: 3,
+    fontFamily: fonts.regular,
   },
 
   content: {
@@ -328,68 +340,99 @@ const styles = StyleSheet.create({
   },
 
   profileCard: {
-    backgroundColor: '#111518',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#252A2D',
+    borderColor: colors.cardBorder,
     borderRadius: 20,
     padding: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 28,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 27,
   },
 
   logo: {
-    width: 58,
-    height: 58,
+    width: 60,
+    height: 60,
     borderRadius: 18,
-    backgroundColor: '#1B2410',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
+    backgroundColor: colors.primaryLight,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 14,
+  },
+
+  profileInfo: {
+    flex: 1,
   },
 
   appName: {
-    color: '#FFFFFF',
+    color: colors.textPrimary,
     fontSize: 19,
-    fontWeight: '700',
+    fontFamily: fonts.bold,
   },
 
   appDescription: {
-    color: '#777C82',
+    color: colors.textMuted,
     fontSize: 11,
-    marginTop: 5,
+    marginTop: 4,
+    fontFamily: fonts.regular,
+  },
+
+  systemBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    backgroundColor: colors.infoBg,
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    marginTop: 8,
+  },
+
+  systemDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: colors.primary,
+    marginRight: 5,
+  },
+
+  systemText: {
+    color: colors.primary,
+    fontSize: 7,
+    letterSpacing: 0.8,
+    fontFamily: fonts.bold,
   },
 
   sectionTitle: {
-    color: '#FFFFFF',
+    color: colors.textPrimary,
     fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 12,
+    marginBottom: 11,
+    fontFamily: fonts.bold,
   },
 
   optionCard: {
-    backgroundColor: '#101316',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#202529',
+    borderColor: colors.border,
     borderRadius: 18,
-    marginBottom: 25,
-    overflow: 'hidden',
+    marginBottom: 24,
+    overflow: "hidden",
   },
 
   optionRow: {
     minHeight: 70,
     paddingHorizontal: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   optionIcon: {
     width: 43,
     height: 43,
     borderRadius: 13,
-    backgroundColor: '#191F15',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: colors.primaryLight,
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 13,
   },
 
@@ -398,69 +441,96 @@ const styles = StyleSheet.create({
   },
 
   optionTitle: {
-    color: '#FFFFFF',
+    color: colors.textPrimary,
     fontSize: 13,
-    fontWeight: '600',
+    fontFamily: fonts.semiBold,
   },
 
   optionSubtitle: {
-    color: '#777C82',
+    color: colors.textMuted,
     fontSize: 10,
     marginTop: 4,
+    lineHeight: 15,
+    fontFamily: fonts.regular,
   },
 
   divider: {
     height: 1,
-    backgroundColor: '#202529',
+    backgroundColor: colors.divider,
     marginLeft: 71,
   },
 
+  versionBadge: {
+    backgroundColor: colors.infoBg,
+    borderRadius: 9,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
+
+  versionText: {
+    color: colors.primary,
+    fontSize: 8,
+    fontFamily: fonts.bold,
+  },
+
   supportCard: {
-    backgroundColor: '#101316',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#202529',
+    borderColor: colors.border,
     borderRadius: 18,
     padding: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   supportIcon: {
     width: 43,
     height: 43,
     borderRadius: 13,
-    backgroundColor: '#191F15',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: colors.primaryLight,
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 13,
   },
 
   bottomNav: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 75,
-    backgroundColor: '#0D0F11',
+    height: 76,
+    backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: '#202326',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    borderTopColor: colors.border,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
 
   navItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 65,
+  },
+
+  activeNavIcon: {
+    width: 34,
+    height: 28,
+    borderRadius: 10,
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   navText: {
-    color: '#666B70',
-    fontSize: 10,
+    color: colors.textMuted,
+    fontSize: 9,
     marginTop: 4,
+    fontFamily: fonts.medium,
   },
 
   activeNavText: {
-    color: '#B8FF00',
+    color: colors.primary,
+    fontFamily: fonts.bold,
   },
 });

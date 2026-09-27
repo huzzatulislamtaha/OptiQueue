@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router, usePathname } from "expo-router";
-import { COLORS } from "../constants/theme";
+import { colors, fonts } from "../constants/theme";
 
 const items = [
   {
@@ -11,22 +11,16 @@ const items = [
     activeIcon: "home",
   },
   {
-    label: "Services",
-    route: "/services",
-    icon: "grid-outline",
-    activeIcon: "grid",
-  },
-  {
     label: "My Token",
     route: "/my-token",
     icon: "ticket-outline",
     activeIcon: "ticket",
   },
   {
-    label: "Queue",
-    route: "/queue",
-    icon: "pulse-outline",
-    activeIcon: "pulse",
+    label: "Alerts",
+    route: "/notifications",
+    icon: "notifications-outline",
+    activeIcon: "notifications",
   },
   {
     label: "Profile",
@@ -44,39 +38,34 @@ export default function BottomNav() {
       <View style={styles.nav}>
         {items.map((item) => {
           const active =
-            pathname === item.route ||
-            (item.route !== "/" &&
-              pathname.startsWith(item.route));
+            item.route === "/"
+              ? pathname === "/"
+              : pathname === item.route ||
+                pathname.startsWith(item.route + "/");
 
           return (
             <Pressable
               key={item.label}
               style={styles.item}
-              onPress={() => router.push(item.route)}
+              onPress={() => {
+                if (!active) {
+                  router.replace(item.route);
+                }
+              }}
             >
+              {/* Icon */}
               <View
-                style={[
-                  styles.iconBox,
-                  active && styles.activeIconBox,
-                ]}
+                style={[styles.iconBox, active && styles.activeIconBox]}
               >
                 <Ionicons
                   name={active ? item.activeIcon : item.icon}
                   size={21}
-                  color={
-                    active
-                      ? COLORS.neon
-                      : COLORS.secondary
-                  }
+                  color={active ? colors.primary : colors.textMuted}
                 />
               </View>
 
-              <Text
-                style={[
-                  styles.label,
-                  active && styles.activeLabel,
-                ]}
-              >
+              {/* Label */}
+              <Text style={[styles.label, active && styles.activeLabel]}>
                 {item.label}
               </Text>
             </Pressable>
@@ -89,48 +78,48 @@ export default function BottomNav() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: 14,
-    paddingBottom: 12,
-    backgroundColor: COLORS.background,
+    width: "100%",
+    backgroundColor: colors.white,
   },
 
   nav: {
-    height: 72,
-    backgroundColor: COLORS.surface,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    width: "100%",
+    height: 76,
+    backgroundColor: colors.white,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
   },
 
   item: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    flex: 1,
   },
 
   iconBox: {
-    width: 36,
-    height: 32,
-    borderRadius: 12,
+    width: 34,
+    height: 28,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
 
   activeIconBox: {
-    backgroundColor: "rgba(32,230,210,0.10)",
+    backgroundColor: colors.primaryLight,
   },
 
   label: {
-    color: COLORS.secondary,
-    fontSize: 10,
-    marginTop: 3,
+    color: colors.textMuted,
+    fontSize: 9,
+    marginTop: 4,
+    fontFamily: fonts.medium,
   },
 
   activeLabel: {
-    color: COLORS.neon,
-    fontWeight: "700",
+    color: colors.primary,
+    fontFamily: fonts.bold,
   },
 });

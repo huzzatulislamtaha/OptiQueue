@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,30 +6,59 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useToken } from '../context/TokenContext';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { colors, fonts } from "../constants/theme";
+
+const services = [
+  {
+    id: "general",
+    title: "General Consultation",
+    subtitle: "General doctor consultation",
+    icon: "medkit-outline",
+    wait: "18 min",
+    queue: "05 people",
+  },
+  {
+    id: "specialist",
+    title: "Specialist Consultation",
+    subtitle: "Consult with a specialist",
+    icon: "person-outline",
+    wait: "32 min",
+    queue: "08 people",
+  },
+  {
+    id: "diagnostic",
+    title: "Diagnostic / Laboratory",
+    subtitle: "Blood test, imaging & reports",
+    icon: "flask-outline",
+    wait: "12 min",
+    queue: "03 people",
+  },
+  {
+    id: "pharmacy",
+    title: "Pharmacy Service",
+    subtitle: "Medicine collection",
+    icon: "medical-outline",
+    wait: "08 min",
+    queue: "02 people",
+  },
+];
 
 export default function GetToken() {
-  const { preselect } = useLocalSearchParams();
-  const { services, getServiceStats } = useToken();
-  const validPreselect = services.some((s) => s.id === preselect)
-    ? preselect
-    : services[0].id;
-  const [selectedService, setSelectedService] = useState(validPreselect);
+  const [selectedService, setSelectedService] = useState("general");
 
-  const selected = services.find((s) => s.id === selectedService);
-  const stats = getServiceStats(selectedService);
+  const selected = services.find(
+    (service) => service.id === selectedService
+  );
 
   const handleContinue = () => {
     router.push({
-      pathname: '/confirmation',
+      pathname: "/confirmation",
       params: {
-        serviceId: selected.id,
         service: selected.title,
-        wait: stats.waitTime,
-        queue: stats.waiting,
+        wait: selected.wait,
       },
     });
   };
@@ -37,13 +66,26 @@ export default function GetToken() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+
+        {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+            activeOpacity={0.8}
+          >
+            <Ionicons
+              name="arrow-back"
+              size={21}
+              color={colors.textPrimary}
+            />
           </TouchableOpacity>
-          <View>
+
+          <View style={styles.headerTextContainer}>
             <Text style={styles.headerTitle}>Get Digital Token</Text>
-            <Text style={styles.headerSubtitle}>Select a service to join the queue</Text>
+            <Text style={styles.headerSubtitle}>
+              Select a service to join the queue
+            </Text>
           </View>
         </View>
 
@@ -51,69 +93,107 @@ export default function GetToken() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <View style={styles.stepRow}>
-            <View style={styles.stepActive}>
-              <Text style={styles.stepNumberActive}>1</Text>
+          {/* Step Indicator */}
+          <View style={styles.stepSection}>
+            <View style={styles.stepRow}>
+              <View style={styles.stepActive}>
+                <Text style={styles.stepNumberActive}>1</Text>
+              </View>
+
+              <View style={styles.stepLine} />
+
+              <View style={styles.step}>
+                <Text style={styles.stepNumber}>2</Text>
+              </View>
+
+              <View style={styles.stepLine} />
+
+              <View style={styles.step}>
+                <Text style={styles.stepNumber}>3</Text>
+              </View>
             </View>
-            <View style={styles.stepLine} />
-            <View style={styles.step}>
-              <Text style={styles.stepNumber}>2</Text>
-            </View>
-            <View style={styles.stepLine} />
-            <View style={styles.step}>
-              <Text style={styles.stepNumber}>3</Text>
+
+            <View style={styles.stepLabels}>
+              <Text style={styles.activeLabel}>Service</Text>
+              <Text style={styles.label}>Details</Text>
+              <Text style={styles.label}>Token</Text>
             </View>
           </View>
 
-          <View style={styles.stepLabels}>
-            <Text style={styles.activeLabel}>Service</Text>
-            <Text style={styles.label}>Details</Text>
-            <Text style={styles.label}>Token</Text>
-          </View>
-
+          {/* Section Header */}
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Choose a Service</Text>
-            <Text style={styles.sectionDescription}>Select the service you need today.</Text>
+            <Text style={styles.sectionDescription}>
+              Select the service you need today.
+            </Text>
           </View>
 
+          {/* Service Cards */}
           <View style={styles.serviceList}>
             {services.map((service) => {
               const isSelected = selectedService === service.id;
-              const serviceStats = getServiceStats(service.id);
 
               return (
                 <TouchableOpacity
                   key={service.id}
-                  activeOpacity={0.85}
-                  style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
+                  activeOpacity={0.88}
+                  style={[
+                    styles.serviceCard,
+                    isSelected && styles.serviceCardSelected,
+                  ]}
                   onPress={() => setSelectedService(service.id)}
                 >
-                  <View style={[styles.iconBox, isSelected && styles.iconBoxSelected]}>
+                  {/* Icon */}
+                  <View
+                    style={[
+                      styles.iconBox,
+                      isSelected && styles.iconBoxSelected,
+                    ]}
+                  >
                     <Ionicons
                       name={service.icon}
-                      size={24}
-                      color={isSelected ? '#071014' : '#20E6D2'}
+                      size={23}
+                      color={isSelected ? colors.white : colors.primary}
                     />
                   </View>
 
+                  {/* Information */}
                   <View style={styles.serviceInfo}>
                     <Text style={styles.serviceTitle}>{service.title}</Text>
-                    <Text style={styles.serviceSubtitle}>{service.subtitle}</Text>
+                    <Text style={styles.serviceSubtitle}>
+                      {service.subtitle}
+                    </Text>
+
                     <View style={styles.serviceMeta}>
                       <View style={styles.metaItem}>
-                        <Ionicons name="people-outline" size={14} color="#7D8996" />
-                        <Text style={styles.metaText}>
-                          {serviceStats.waiting} people
-                        </Text>
+                        <Ionicons
+                          name="people-outline"
+                          size={14}
+                          color={colors.textMuted}
+                        />
+                        <Text style={styles.metaText}>{service.queue}</Text>
                       </View>
+
                       <View style={styles.metaItem}>
-                        <Ionicons name="time-outline" size={14} color="#7D8996" />
-                        <Text style={styles.metaText}>~ {serviceStats.waitTime}</Text>
+                        <Ionicons
+                          name="time-outline"
+                          size={14}
+                          color={colors.textMuted}
+                        />
+                        <Text style={styles.metaText}>
+                          ~ {service.wait}
+                        </Text>
                       </View>
                     </View>
                   </View>
 
-                  <View style={[styles.radio, isSelected && styles.radioSelected]}>
+                  {/* Radio */}
+                  <View
+                    style={[
+                      styles.radio,
+                      isSelected && styles.radioSelected,
+                    ]}
+                  >
                     {isSelected && <View style={styles.radioDot} />}
                   </View>
                 </TouchableOpacity>
@@ -121,201 +201,406 @@ export default function GetToken() {
             })}
           </View>
 
+          {/* Selected Service */}
           <View style={styles.previewCard}>
             <View style={styles.previewIcon}>
-              <Ionicons name="checkmark-circle" size={22} color="#20E6D2" />
+              <Ionicons
+                name="checkmark-circle"
+                size={23}
+                color={colors.primary}
+              />
             </View>
+
             <View style={styles.previewInfo}>
               <Text style={styles.previewLabel}>SELECTED SERVICE</Text>
               <Text style={styles.previewTitle}>{selected.title}</Text>
               <Text style={styles.previewWait}>
-                Estimated waiting time: {stats.waitTime}
+                Estimated waiting time: {selected.wait}
               </Text>
             </View>
           </View>
 
+          {/* Information Box */}
           <View style={styles.infoBox}>
-            <Ionicons name="information-circle-outline" size={20} color="#20E6D2" />
+            <View style={styles.infoIcon}>
+              <Ionicons
+                name="information-circle-outline"
+                size={19}
+                color={colors.primary}
+              />
+            </View>
             <Text style={styles.infoText}>
-              Your digital token will be generated after confirming the selected service.
+              Your digital token will be generated after confirming the
+              selected service.
             </Text>
           </View>
 
           <View style={{ height: 110 }} />
         </ScrollView>
 
+        {/* Bottom Button */}
         <View style={styles.bottomContainer}>
           <TouchableOpacity
             style={styles.continueButton}
-            activeOpacity={0.85}
+            activeOpacity={0.88}
             onPress={handleContinue}
           >
             <Text style={styles.continueText}>Continue</Text>
-            <Ionicons name="arrow-forward" size={20} color="#071014" />
+            <View style={styles.arrowCircle}>
+              <Ionicons
+                name="arrow-forward"
+                size={18}
+                color={colors.primary}
+              />
+            </View>
           </TouchableOpacity>
         </View>
+
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#070A0F' },
-  container: { flex: 1, backgroundColor: '#070A0F' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 18,
-    gap: 14,
+  safeArea: {
+    flex: 1,
+    backgroundColor: colors.background,
   },
+
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 16,
+  },
+
   backButton: {
     width: 42,
     height: 42,
     borderRadius: 13,
-    backgroundColor: '#101720',
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#1B2832',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 13,
   },
-  headerTitle: { color: '#FFFFFF', fontSize: 20, fontWeight: '800' },
-  headerSubtitle: { color: '#7D8996', fontSize: 12, marginTop: 3 },
-  scrollContent: { paddingHorizontal: 20, paddingTop: 8 },
-  stepRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10 },
+
+  headerTextContainer: {
+    flex: 1,
+  },
+
+  headerTitle: {
+    color: colors.textPrimary,
+    fontSize: 20,
+    fontFamily: fonts.bold,
+  },
+
+  headerSubtitle: {
+    color: colors.textMuted,
+    fontSize: 12,
+    marginTop: 3,
+    fontFamily: fonts.regular,
+  },
+
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 5,
+  },
+
+  stepSection: {
+    marginTop: 5,
+    backgroundColor: colors.white,
+    borderRadius: 18,
+    paddingHorizontal: 17,
+    paddingVertical: 15,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+  },
+
+  stepRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   stepActive: {
-    width: 32,
-    height: 32,
+    width: 31,
+    height: 31,
     borderRadius: 16,
-    backgroundColor: '#20E6D2',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
   },
+
   step: {
-    width: 32,
-    height: 32,
+    width: 31,
+    height: 31,
     borderRadius: 16,
-    backgroundColor: '#121A22',
+    backgroundColor: colors.softBg,
     borderWidth: 1,
-    borderColor: '#26323C',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: colors.progressInactiveBorder,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  stepNumberActive: { color: '#071014', fontWeight: '800', fontSize: 13 },
-  stepNumber: { color: '#66737F', fontWeight: '700', fontSize: 13 },
-  stepLine: { flex: 1, height: 1, backgroundColor: '#24303A', marginHorizontal: 8 },
+
+  stepNumberActive: {
+    color: colors.white,
+    fontSize: 12,
+    fontFamily: fonts.bold,
+  },
+
+  stepNumber: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontFamily: fonts.semiBold,
+  },
+
+  stepLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: colors.border,
+    marginHorizontal: 8,
+  },
+
   stepLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 8,
-    marginHorizontal: 2,
+    marginHorizontal: 1,
   },
-  activeLabel: { color: '#20E6D2', fontSize: 11, fontWeight: '700' },
-  label: { color: '#66737F', fontSize: 11, fontWeight: '600' },
-  sectionHeader: { marginTop: 30, marginBottom: 16 },
-  sectionTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: '800' },
-  sectionDescription: { color: '#7D8996', fontSize: 13, marginTop: 5 },
-  serviceList: { gap: 12 },
+
+  activeLabel: {
+    color: colors.primary,
+    fontSize: 11,
+    fontFamily: fonts.bold,
+  },
+
+  label: {
+    color: colors.textMuted,
+    fontSize: 11,
+    fontFamily: fonts.medium,
+  },
+
+  sectionHeader: {
+    marginTop: 25,
+    marginBottom: 15,
+  },
+
+  sectionTitle: {
+    color: colors.textPrimary,
+    fontSize: 22,
+    fontFamily: fonts.bold,
+  },
+
+  sectionDescription: {
+    color: colors.textMuted,
+    fontSize: 13,
+    marginTop: 5,
+    fontFamily: fonts.regular,
+  },
+
+  serviceList: {
+    gap: 11,
+  },
+
   serviceCard: {
-    minHeight: 108,
-    backgroundColor: '#101820',
+    minHeight: 105,
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: '#1D2933',
+    borderColor: colors.cardBorder,
     borderRadius: 17,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
+    padding: 15,
+    flexDirection: "row",
+    alignItems: "center",
   },
-  serviceCardSelected: { borderColor: '#20E6D2', backgroundColor: '#101D22' },
+
+  serviceCardSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.selectedCardBg,
+  },
+
   iconBox: {
-    width: 48,
-    height: 48,
+    width: 47,
+    height: 47,
     borderRadius: 14,
-    backgroundColor: '#12252B',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 13,
   },
-  iconBoxSelected: { backgroundColor: '#20E6D2' },
-  serviceInfo: { flex: 1 },
-  serviceTitle: { color: '#FFFFFF', fontSize: 15, fontWeight: '800' },
-  serviceSubtitle: { color: '#778490', fontSize: 11, marginTop: 4 },
-  serviceMeta: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 9 },
-  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  metaText: { color: '#778490', fontSize: 10 },
+
+  iconBoxSelected: {
+    backgroundColor: colors.primary,
+  },
+
+  serviceInfo: {
+    flex: 1,
+  },
+
+  serviceTitle: {
+    color: colors.textPrimary,
+    fontSize: 14.5,
+    fontFamily: fonts.bold,
+  },
+
+  serviceSubtitle: {
+    color: colors.textMuted,
+    fontSize: 11,
+    marginTop: 4,
+    fontFamily: fonts.regular,
+  },
+
+  serviceMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    marginTop: 9,
+  },
+
+  metaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+
+  metaText: {
+    color: colors.textMuted,
+    fontSize: 10,
+    fontFamily: fonts.regular,
+  },
+
   radio: {
     width: 22,
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: '#3B4650',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: colors.radioBorder,
+    alignItems: "center",
+    justifyContent: "center",
     marginLeft: 10,
   },
-  radioSelected: { borderColor: '#20E6D2' },
-  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#20E6D2' },
-  previewCard: {
-    marginTop: 18,
-    backgroundColor: '#0D171D',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#1B3439',
-    padding: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+
+  radioSelected: {
+    borderColor: colors.primary,
   },
+
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.primary,
+  },
+
+  previewCard: {
+    marginTop: 17,
+    backgroundColor: colors.white,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
+    padding: 15,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   previewIcon: {
     width: 42,
     height: 42,
-    borderRadius: 12,
-    backgroundColor: '#10282C',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 13,
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
   },
-  previewInfo: { flex: 1 },
-  previewLabel: {
-    color: '#20E6D2',
-    fontSize: 9,
-    fontWeight: '800',
-    letterSpacing: 1,
+
+  previewInfo: {
+    flex: 1,
   },
-  previewTitle: { color: '#FFFFFF', fontSize: 14, fontWeight: '800', marginTop: 3 },
-  previewWait: { color: '#7D8996', fontSize: 10, marginTop: 3 },
+
+  previewLabel: {
+    color: colors.primary,
+    fontSize: 9,
+    letterSpacing: 1,
+    fontFamily: fonts.bold,
+  },
+
+  previewTitle: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    marginTop: 3,
+    fontFamily: fonts.bold,
+  },
+
+  previewWait: {
+    color: colors.textMuted,
+    fontSize: 10,
+    marginTop: 3,
+    fontFamily: fonts.regular,
+  },
+
   infoBox: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginTop: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 14,
     padding: 14,
-    backgroundColor: '#0D141B',
+    backgroundColor: colors.infoBg,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#17242D',
-    gap: 10,
+    borderColor: colors.infoBorder,
   },
-  infoText: { flex: 1, color: '#71808C', fontSize: 11, lineHeight: 17 },
+
+  infoIcon: {
+    marginRight: 10,
+  },
+
+  infoText: {
+    flex: 1,
+    color: colors.textSecondary,
+    fontSize: 11,
+    lineHeight: 17,
+    fontFamily: fonts.regular,
+  },
+
   bottomContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 18,
-    backgroundColor: '#070A0F',
+    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: '#111A22',
+    borderTopColor: colors.border,
   },
+
   continueButton: {
     height: 54,
-    borderRadius: 15,
-    backgroundColor: '#20E6D2',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 9,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  continueText: { color: '#071014', fontSize: 14, fontWeight: '900' },
+
+  continueText: {
+    color: colors.white,
+    fontSize: 14,
+    fontFamily: fonts.bold,
+  },
+
+  arrowCircle: {
+    width: 31,
+    height: 31,
+    borderRadius: 16,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 10,
+  },
 });

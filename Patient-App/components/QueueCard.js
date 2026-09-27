@@ -1,38 +1,16 @@
 import { View, Text, StyleSheet } from "react-native";
-import { COLORS } from "../constants/theme";
+import { colors, fonts } from "../constants/theme";
 
-export default function QueueCard({
-  token,
-  position,
-  status,
-  current,
-}) {
+export default function QueueCard({ token, position, status, current }) {
   return (
-    <View
-      style={[
-        styles.card,
-        current && styles.currentCard,
-      ]}
-    >
+    <View style={[styles.card, current && styles.currentCard]}>
       <View>
         <Text style={styles.token}>{token}</Text>
-        <Text style={styles.position}>
-          Position #{position}
-        </Text>
+        <Text style={styles.position}>Position #{position}</Text>
       </View>
 
-      <View
-        style={[
-          styles.badge,
-          current && styles.currentBadge,
-        ]}
-      >
-        <Text
-          style={[
-            styles.badgeText,
-            current && styles.currentText,
-          ]}
-        >
+      <View style={[styles.badge, current && styles.currentBadge]}>
+        <Text style={[styles.badgeText, current && styles.currentText]}>
           {status}
         </Text>
       </View>
@@ -42,11 +20,11 @@ export default function QueueCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.card,
+    backgroundColor: colors.card,
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: colors.border,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -54,39 +32,40 @@ const styles = StyleSheet.create({
   },
 
   currentCard: {
-    borderColor: "rgba(32,230,210,0.35)",
+    borderColor: colors.neonBorder,
   },
 
   token: {
-    color: COLORS.white,
+    color: colors.white,
     fontSize: 18,
-    fontWeight: "800",
+    fontFamily: fonts.bold,
   },
 
   position: {
-    color: COLORS.secondary,
+    color: colors.secondary,
     fontSize: 11,
     marginTop: 4,
+    fontFamily: fonts.regular,
   },
 
   badge: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12,
-    backgroundColor: "rgba(141,153,168,0.10)",
+    backgroundColor: colors.badgeBg,
   },
 
   currentBadge: {
-    backgroundColor: "rgba(32,230,210,0.10)",
+    backgroundColor: colors.neonBg,
   },
 
   badgeText: {
-    color: COLORS.secondary,
+    color: colors.secondary,
     fontSize: 10,
-    fontWeight: "700",
+    fontFamily: fonts.semiBold,
   },
 
   currentText: {
-    color: COLORS.neon,
+    color: colors.neon,
   },
 });
