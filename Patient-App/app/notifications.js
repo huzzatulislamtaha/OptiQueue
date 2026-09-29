@@ -1,410 +1,468 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
+  Pressable,
   ScrollView,
-  TouchableOpacity,
-  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import BottomNav from "../components/BottomNav";
 import { colors, fonts } from "../constants/theme";
 
-const notifications = [
+const initialNotifications = [
   {
     id: 1,
-    icon: "notifications",
     title: "Token Confirmed",
     message: "Your token A-027 has been successfully confirmed.",
     time: "2 min ago",
+    icon: "notifications",
     unread: true,
   },
   {
     id: 2,
-    icon: "time",
     title: "Queue Update",
     message: "There are currently 5 patients ahead of you.",
     time: "5 min ago",
+    icon: "time",
     unread: true,
   },
   {
     id: 3,
-    icon: "person",
     title: "Now Serving",
     message: "Currently serving token A-021.",
     time: "8 min ago",
+    icon: "person",
     unread: false,
   },
   {
     id: 4,
-    icon: "checkmark-circle",
     title: "Service Available",
     message: "General Consultation service is currently available.",
     time: "15 min ago",
+    icon: "checkmark-circle",
     unread: false,
   },
 ];
 
 export default function Notifications() {
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+  const [notifications, setNotifications] =
+    useState(initialNotifications);
 
-        {/* Header */}
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const markAsRead = (id) => {
+    setNotifications((current) =>
+      current.map((item) =>
+        item.id === id ? { ...item, unread: false } : item
+      )
+    );
+  };
+
+  const markAllAsRead = () => {
+    setNotifications((current) =>
+      current.map((item) => ({
+        ...item,
+        unread: false,
+      }))
+    );
+    setMenuOpen(false);
+  };
+
+  const clearNotifications = () => {
+    setNotifications([]);
+    setMenuOpen(false);
+  };
+
+  return (
+    <View style={styles.screen}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
+        {/* HEADER */}
         <View style={styles.header}>
-          <TouchableOpacity
+          <Pressable
             style={styles.backButton}
             onPress={() => router.back()}
-            activeOpacity={0.8}
           >
             <Ionicons
               name="arrow-back"
-              size={21}
+              size={20}
               color={colors.textPrimary}
             />
-          </TouchableOpacity>
+          </Pressable>
 
-          <View style={styles.headerInfo}>
+          <View style={styles.headerText}>
             <Text style={styles.title}>Notifications</Text>
             <Text style={styles.subtitle}>
               Stay updated with your queue
             </Text>
           </View>
 
-          <TouchableOpacity style={styles.moreButton} activeOpacity={0.8}>
+          <Pressable
+            style={styles.menuButton}
+            onPress={() => setMenuOpen(!menuOpen)}
+          >
             <Ionicons
               name="ellipsis-horizontal"
-              size={21}
+              size={20}
               color={colors.textPrimary}
             />
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-        >
-          {/* Live Queue Status */}
-          <View style={styles.statusCard}>
-            <View style={styles.statusIcon}>
-              <Ionicons name="pulse" size={23} color={colors.primary} />
-            </View>
-
-            <View style={styles.statusText}>
-              <Text style={styles.statusTitle}>Queue is Live</Text>
-              <Text style={styles.statusDescription}>
-                Your queue information is being updated.
-              </Text>
-            </View>
-
-            <View style={styles.liveIndicator}>
-              <View style={styles.liveDot} />
-              <Text style={styles.liveText}>LIVE</Text>
-            </View>
-          </View>
-
-          {/* Section Header */}
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent Updates</Text>
-            <TouchableOpacity activeOpacity={0.7}>
-              <Text style={styles.markText}>Mark all read</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Notifications */}
-          {notifications.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={[
-                styles.notificationCard,
-                item.unread && styles.unreadCard,
-              ]}
-              activeOpacity={0.85}
-            >
-              <View
-                style={[
-                  styles.notificationIcon,
-                  item.unread && styles.unreadIcon,
-                ]}
-              >
-                <Ionicons
-                  name={item.icon}
-                  size={20}
-                  color={colors.primary}
-                />
-              </View>
-
-              <View style={styles.notificationContent}>
-                <View style={styles.notificationTop}>
-                  <Text style={styles.notificationTitle}>{item.title}</Text>
-                  {item.unread && <View style={styles.unreadDot} />}
-                </View>
-
-                <Text style={styles.message}>{item.message}</Text>
-                <Text style={styles.time}>{item.time}</Text>
-              </View>
-
+        {/* MENU */}
+        {menuOpen && (
+          <View style={styles.menu}>
+            <Pressable style={styles.menuItem} onPress={markAllAsRead}>
               <Ionicons
-                name="chevron-forward"
-                size={16}
-                color={colors.chevron}
-                style={styles.chevron}
-              />
-            </TouchableOpacity>
-          ))}
-
-          <View style={{ height: 100 }} />
-        </ScrollView>
-
-        {/* Bottom Navigation */}
-        <View style={styles.bottomNav}>
-          {/* Home */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/")}
-          >
-            <Ionicons
-              name="home-outline"
-              size={21}
-              color={colors.textMuted}
-            />
-            <Text style={styles.navText}>Home</Text>
-          </TouchableOpacity>
-
-          {/* My Token */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/my-token")}
-          >
-            <Ionicons
-              name="ticket-outline"
-              size={21}
-              color={colors.textMuted}
-            />
-            <Text style={styles.navText}>My Token</Text>
-          </TouchableOpacity>
-
-          {/* Alerts */}
-          <TouchableOpacity style={styles.navItem} activeOpacity={0.8}>
-            <View style={styles.activeNavIcon}>
-              <Ionicons
-                name="notifications"
-                size={20}
+                name="checkmark-done-outline"
+                size={17}
                 color={colors.primary}
               />
-            </View>
-            <Text style={[styles.navText, styles.activeNavText]}>
-              Alerts
-            </Text>
-          </TouchableOpacity>
+              <Text style={styles.menuText}>Mark all as read</Text>
+            </Pressable>
 
-          {/* Profile */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/profile")}
-          >
+            <View style={styles.menuDivider} />
+
+            <Pressable
+              style={styles.menuItem}
+              onPress={clearNotifications}
+            >
+              <Ionicons
+                name="trash-outline"
+                size={17}
+                color={colors.danger}
+              />
+              <Text style={[styles.menuText, styles.deleteText]}>
+                Clear notifications
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
+        {/* LIVE CARD */}
+        <View style={styles.liveCard}>
+          <View style={styles.liveIcon}>
             <Ionicons
-              name="person-outline"
+              name="pulse-outline"
               size={21}
-              color={colors.textMuted}
+              color={colors.primary}
             />
-            <Text style={styles.navText}>Profile</Text>
-          </TouchableOpacity>
+          </View>
+
+          <View style={styles.liveText}>
+            <Text style={styles.liveTitle}>Queue is Live</Text>
+            <Text style={styles.liveSubtitle}>
+              Your queue information is being updated.
+            </Text>
+          </View>
+
+          <View style={styles.liveBadge}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveBadgeText}>LIVE</Text>
+          </View>
         </View>
 
-      </View>
-    </SafeAreaView>
+        {/* RECENT */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Recent Updates</Text>
+
+          {notifications.some((item) => item.unread) && (
+            <Pressable onPress={markAllAsRead}>
+              <Text style={styles.markAll}>Mark all read</Text>
+            </Pressable>
+          )}
+        </View>
+
+        {/* NOTIFICATIONS */}
+        <View style={styles.notificationCard}>
+          {notifications.length === 0 ? (
+            <View style={styles.emptyState}>
+              <View style={styles.emptyIcon}>
+                <Ionicons
+                  name="notifications-off-outline"
+                  size={24}
+                  color={colors.textMuted}
+                />
+              </View>
+              <Text style={styles.emptyTitle}>No notifications</Text>
+              <Text style={styles.emptySubtitle}>
+                Your notification list is clear.
+              </Text>
+            </View>
+          ) : (
+            notifications.map((item, index) => (
+              <React.Fragment key={item.id}>
+                <Pressable
+                  style={[
+                    styles.notificationRow,
+                    item.unread && styles.unreadRow,
+                  ]}
+                  onPress={() => markAsRead(item.id)}
+                >
+                  <View style={styles.notificationIcon}>
+                    <Ionicons
+                      name={item.icon}
+                      size={18}
+                      color={colors.primary}
+                    />
+                  </View>
+
+                  <View style={styles.notificationText}>
+                    <View style={styles.titleRow}>
+                      <Text style={styles.notificationTitle}>
+                        {item.title}
+                      </Text>
+                      {item.unread && <View style={styles.unreadDot} />}
+                    </View>
+
+                    <Text style={styles.message}>{item.message}</Text>
+                    <Text style={styles.time}>{item.time}</Text>
+                  </View>
+
+                  <Ionicons
+                    name="chevron-forward"
+                    size={16}
+                    color={colors.textMuted}
+                  />
+                </Pressable>
+
+                {index !== notifications.length - 1 && (
+                  <View style={styles.divider} />
+                )}
+              </React.Fragment>
+            ))
+          )}
+        </View>
+      </ScrollView>
+
+      <BottomNav active="Alerts" />
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
+const styles = {
+  screen: {
     flex: 1,
     backgroundColor: colors.background,
   },
 
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
+  content: {
+    padding: 18,
+    paddingBottom: 95,
   },
 
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 15,
-    paddingBottom: 16,
+    marginBottom: 17,
   },
 
   backButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 13,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
-    justifyContent: "center",
     alignItems: "center",
-    marginRight: 13,
+    justifyContent: "center",
   },
 
-  headerInfo: {
+  headerText: {
     flex: 1,
+    marginLeft: 11,
   },
 
   title: {
+    fontSize: 20,
     color: colors.textPrimary,
-    fontSize: 21,
     fontFamily: fonts.bold,
   },
 
   subtitle: {
-    color: colors.textMuted,
-    fontSize: 12,
-    marginTop: 3,
+    marginTop: 2,
+    fontSize: 10,
+    color: colors.textSecondary,
     fontFamily: fonts.regular,
   },
 
-  moreButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 13,
+  menuButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
 
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 5,
-    paddingBottom: 100,
-  },
-
-  statusCard: {
+  menu: {
+    position: "absolute",
+    top: 60,
+    right: 18,
+    width: 190,
+    zIndex: 20,
     backgroundColor: colors.white,
+    borderRadius: 13,
     borderWidth: 1,
-    borderColor: colors.cardBorder,
-    borderRadius: 18,
-    padding: 15,
+    borderColor: colors.border,
+    paddingVertical: 5,
+    shadowColor: "#000000",
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+
+  menuItem: {
+    minHeight: 45,
+    paddingHorizontal: 13,
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 25,
   },
 
-  statusIcon: {
-    width: 46,
-    height: 46,
-    borderRadius: 14,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-
-  statusText: {
-    flex: 1,
-  },
-
-  statusTitle: {
-    color: colors.textPrimary,
-    fontSize: 15,
-    fontFamily: fonts.bold,
-  },
-
-  statusDescription: {
-    color: colors.textMuted,
+  menuText: {
+    marginLeft: 9,
     fontSize: 11,
-    marginTop: 4,
-    fontFamily: fonts.regular,
+    color: colors.textPrimary,
+    fontFamily: fonts.medium,
   },
 
-  liveIndicator: {
+  deleteText: {
+    color: colors.danger,
+  },
+
+  menuDivider: {
+    height: 1,
+    backgroundColor: colors.border,
+  },
+
+  liveCard: {
+    backgroundColor: colors.white,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 13,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.primaryLight,
-    borderRadius: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    marginBottom: 21,
   },
 
-  liveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.primary,
-    marginRight: 5,
+  liveIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
+    backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   liveText: {
-    color: colors.primary,
+    flex: 1,
+    marginLeft: 10,
+  },
+
+  liveTitle: {
+    fontSize: 12,
+    color: colors.textPrimary,
+    fontFamily: fonts.bold,
+  },
+
+  liveSubtitle: {
+    marginTop: 3,
+    fontSize: 9,
+    color: colors.textSecondary,
+    fontFamily: fonts.regular,
+  },
+
+  liveBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 10,
+    backgroundColor: colors.successLight,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  liveDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: colors.success,
+    marginRight: 4,
+  },
+
+  liveBadgeText: {
     fontSize: 8,
+    color: colors.success,
     fontFamily: fonts.bold,
   },
 
   sectionHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    justifyContent: "space-between",
+    marginBottom: 9,
   },
 
   sectionTitle: {
+    fontSize: 14,
     color: colors.textPrimary,
-    fontSize: 17,
     fontFamily: fonts.bold,
   },
 
-  markText: {
+  markAll: {
+    fontSize: 10,
     color: colors.primary,
-    fontSize: 11,
     fontFamily: fonts.semiBold,
   },
 
   notificationCard: {
     backgroundColor: colors.white,
+    borderRadius: 17,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 17,
-    padding: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 11,
+    overflow: "hidden",
   },
 
-  unreadCard: {
-    borderColor: colors.unreadBorder,
+  notificationRow: {
+    minHeight: 82,
+    paddingHorizontal: 13,
+    paddingVertical: 11,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  unreadRow: {
     backgroundColor: colors.unreadBg,
   },
 
   notificationIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 13,
-    backgroundColor: colors.softBg,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-
-  unreadIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     backgroundColor: colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
-  notificationContent: {
+  notificationText: {
     flex: 1,
+    marginLeft: 10,
+    marginRight: 7,
   },
 
-  notificationTop: {
+  titleRow: {
     flexDirection: "row",
     alignItems: "center",
   },
 
   notificationTitle: {
+    fontSize: 11,
     color: colors.textPrimary,
-    fontSize: 14,
     fontFamily: fonts.bold,
   },
 
@@ -413,66 +471,55 @@ const styles = StyleSheet.create({
     height: 7,
     borderRadius: 4,
     backgroundColor: colors.primary,
-    marginLeft: 8,
+    marginLeft: 6,
   },
 
   message: {
-    color: colors.textMuted,
-    fontSize: 11.5,
-    lineHeight: 18,
-    marginTop: 5,
+    marginTop: 4,
+    fontSize: 9,
+    lineHeight: 14,
+    color: colors.textSecondary,
     fontFamily: fonts.regular,
   },
 
   time: {
-    color: colors.timeText,
-    fontSize: 9.5,
-    marginTop: 7,
+    marginTop: 4,
+    fontSize: 8,
+    color: colors.textMuted,
     fontFamily: fonts.regular,
   },
 
-  chevron: {
-    marginLeft: 7,
+  divider: {
+    height: 1,
+    backgroundColor: colors.border,
+    marginLeft: 63,
   },
 
-  bottomNav: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 76,
-    backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    flexDirection: "row",
-    justifyContent: "space-around",
+  emptyState: {
+    paddingVertical: 45,
     alignItems: "center",
   },
 
-  navItem: {
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 65,
-  },
-
-  activeNavIcon: {
-    width: 34,
-    height: 28,
-    borderRadius: 10,
-    backgroundColor: colors.primaryLight,
+  emptyIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 16,
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
   },
 
-  navText: {
-    color: colors.textMuted,
-    fontSize: 9,
-    marginTop: 4,
-    fontFamily: fonts.medium,
-  },
-
-  activeNavText: {
-    color: colors.primary,
+  emptyTitle: {
+    marginTop: 10,
+    fontSize: 13,
+    color: colors.textPrimary,
     fontFamily: fonts.bold,
   },
-});
+
+  emptySubtitle: {
+    marginTop: 4,
+    fontSize: 10,
+    color: colors.textSecondary,
+    fontFamily: fonts.regular,
+  },
+};

@@ -5,17 +5,17 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { colors, fonts } from "../constants/theme";
+import BottomNav from "../components/BottomNav";
 
 export default function Home() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.content}
@@ -160,7 +160,6 @@ export default function Home() {
           <Text style={styles.sectionTitle}>Quick Actions</Text>
 
           <View style={styles.quickRow}>
-            {/* Live Queue */}
             <TouchableOpacity
               style={styles.quickCard}
               activeOpacity={0.88}
@@ -184,7 +183,6 @@ export default function Home() {
               </View>
             </TouchableOpacity>
 
-            {/* Alerts */}
             <TouchableOpacity
               style={styles.quickCard}
               activeOpacity={0.88}
@@ -209,62 +207,10 @@ export default function Home() {
             </TouchableOpacity>
           </View>
 
-          <View style={{ height: 105 }} />
+          <View style={{ height: 20 }} />
         </ScrollView>
 
-        {/* Bottom Navigation */}
-        <View style={styles.bottomNav}>
-          {/* Home */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/")}
-          >
-            <View style={styles.activeNavIcon}>
-              <Ionicons name="home" size={20} color={colors.primary} />
-            </View>
-            <Text style={[styles.navText, styles.activeNavText]}>Home</Text>
-          </TouchableOpacity>
-
-          {/* My Token */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/my-token")}
-          >
-            <Ionicons
-              name="ticket-outline"
-              size={21}
-              color={colors.textMuted}
-            />
-            <Text style={styles.navText}>My Token</Text>
-          </TouchableOpacity>
-
-          {/* Alerts */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/notifications")}
-          >
-            <Ionicons
-              name="notifications-outline"
-              size={21}
-              color={colors.textMuted}
-            />
-            <Text style={styles.navText}>Alerts</Text>
-          </TouchableOpacity>
-
-          {/* Profile */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/profile")}
-          >
-            <Ionicons
-              name="person-outline"
-              size={21}
-              color={colors.textMuted}
-            />
-            <Text style={styles.navText}>Profile</Text>
-          </TouchableOpacity>
-        </View>
-
+        <BottomNav />
       </View>
     </SafeAreaView>
   );
@@ -640,46 +586,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.infoBg,
     justifyContent: "center",
     alignItems: "center",
-  },
-
-  bottomNav: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 76,
-    backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-
-  navItem: {
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 65,
-  },
-
-  activeNavIcon: {
-    width: 34,
-    height: 28,
-    borderRadius: 10,
-    backgroundColor: colors.primaryLight,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  navText: {
-    color: colors.textMuted,
-    fontSize: 9,
-    marginTop: 4,
-    fontFamily: fonts.medium,
-  },
-
-  activeNavText: {
-    color: colors.primary,
-    fontFamily: fonts.bold,
   },
 });

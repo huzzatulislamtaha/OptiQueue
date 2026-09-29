@@ -23,10 +23,10 @@ const items = [
     activeIcon: "notifications",
   },
   {
-    label: "Profile",
-    route: "/profile",
-    icon: "person-outline",
-    activeIcon: "person",
+    label: "Settings",
+    route: "/settings",
+    icon: "settings-outline",
+    activeIcon: "settings",
   },
 ];
 
@@ -53,7 +53,6 @@ export default function BottomNav() {
                 }
               }}
             >
-              {/* Icon */}
               <View
                 style={[styles.iconBox, active && styles.activeIconBox]}
               >
@@ -64,7 +63,6 @@ export default function BottomNav() {
                 />
               </View>
 
-              {/* Label */}
               <Text style={[styles.label, active && styles.activeLabel]}>
                 {item.label}
               </Text>
