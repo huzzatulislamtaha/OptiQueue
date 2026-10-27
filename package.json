@@ -1,3 +1,4 @@
+
 {
   "name": "optiqueue-monorepo",
   "private": true,
@@ -7,11 +8,12 @@
     "Live-Queue"
   ],
   "scripts": {
-    "patient": "npm run start --workspace=patient-app",
-    "admin": "npm run start --workspace=admin-panel",
-    "live": "npm run start --workspace=live-queue"
+    "patient": "npm run start --workspace=Patient-App -- --port 8081",
+    "admin": "npm run start --workspace=Admin-Panel -- --port 8082",
+    "live": "npm run start --workspace=Live-Queue -- --port 8083",
+    "dev": "concurrently -k \"npm run patient\" \"npm run admin\" \"npm run live\""
   },
-  "dependencies": {
-    "react-native-safe-area-context": "~5.7.0"
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
